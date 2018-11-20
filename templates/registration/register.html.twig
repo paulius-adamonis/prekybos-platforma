@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Registracija{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    {{ form_row(form.vardas) }}
+    {{ form_row(form.pavarde) }}
+    {{ form_row(form.elPastas) }}
+    {{ form_row(form.telNr) }}
+    {{ form_row(form.plainPassword.first) }}
+    {{ form_row(form.plainPassword.second) }}
+
+    <button type="submit">Registruotis!</button>
+    {{ form_end(form) }}
+{% endblock %}
