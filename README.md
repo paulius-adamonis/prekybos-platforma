@@ -1,10 +1,10 @@
-# prekybos-platforma
+# Prekybos platforma
 
 Prisijungimai prie sistemos:
-                ADMIN:                  USER:
-email:          admin@admin.lt          user@user.lt
-pass:           admin                   user
 
+                    ADMIN:                  USER:
+    email:          admin@admin.lt          user@user.lt
+    pass:           admin                   user
 
-Template'ui naudojame "Material Design for Bootstrap":
+Template'ui naudojamas "Material Design for Bootstrap":
 https://fezvrasta.github.io/bootstrap-material-design/
