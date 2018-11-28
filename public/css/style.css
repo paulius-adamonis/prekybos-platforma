@@ -43,3 +43,8 @@
 .navbar-primary .navbar-text a:hover, .navbar-primary .navbar-text a:focus {
     color: #fff;
 }
+
+#map {
+    height: 800px;
+    width: 100%;
+}
