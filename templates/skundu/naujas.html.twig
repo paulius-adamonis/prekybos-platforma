@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Skundai{% endblock %}
+
+{% block body %}
+    <div class="card-text" style="position: relative;">
+        {{ form_start(forms) }}
+        {{ form_errors(forms) }}
+        {{ form_widget(forms) }}
+        {{ form_end(forms) }}
+    </div>
+{% endblock %}

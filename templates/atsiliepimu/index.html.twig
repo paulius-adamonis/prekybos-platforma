@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello!{% endblock %}
+
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+
+            <div class="card-text" style="position: relative;">
+                <div class="row">
+                    <div class="leftcolumn">
+                        <h4>{{ user.elpastas }}</h4>
+                        <h6>ID: {{ user.id }}</h6>
+                        {{ averageRating|round|rating(5, "fa-norm") }}
+                        <h6>Reitingas: {{ averageRating|round(2,'ceil') }}</h6>
+
+                    </div>
+                    <div class="rightcolumn col-sm">
+                        <h5 class="card-title" style="text-align: center; font-weight: bold;">{{ title }}</h5>
+                        <hr>
+                        <div class="ratingsTab" style="display: block;">
+                            {% for rating in allRatings %}
+                            <div class="ratingCard">
+                                <h5>{{ rating.fkRasytojas.vardas }} {{ rating.fkRasytojas.pavarde }}</h5>
+                                <div class="row">
+                                    <span class="col-sm-9">{{ rating.aprasymas }}</span>
+                                    <span class="col-sm-3" style="text-align: right;">{{ rating.reitingas|rating }}</span>
+                                </div>
+                            </div>
+                                <hr style="margin: 0;">
+                            {% endfor %}
+
+                            <div class="navigation" align='center'>
+                                {{ knp_pagination_render(allRatings) }}
+                            </div>
+                        </div>
+                        {% if tikrinam %}
+                        <div class="ratingsFormTab" style="display: none;">
+                            {{ form_start(form) }}
+                            {{ form_errors(form) }}
+                            <div class="row">
+                                <span class="col-sm-9">{{ form_row(form.aprasymas) }}</span>
+                                <span class="col-sm-3" style="text-align: center; margin-top: 15px;">{{ form_row(form.reitingas) }}</span>
+                            </div>
+
+
+                            {{ form_end(form) }}
+                        </div>
+                        <ul style="padding-left: 0px; margin-top: 10px; display: flex;">
+                            <li style="display: unset; right: 30px; position: absolute;"><a id="showForm" href="#">Parašyti atsiliepimą</a></li>
+                            <li style="display: unset; right: 30px; position: absolute;"><a id="showRatings" style="display: none;" href="#">Žiūrėti visus atsiliepimus</a></li>
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <script>
+                $(document).ready(function(){
+                    $("#showRatings").click(function(){
+                        $(".ratingsTab").show();
+                        $(".ratingsFormTab").hide();
+                        $("#showForm").show();
+                        $("#showRatings").hide();
+
+                    });
+                    $("#showForm").click(function(){
+                        $(".ratingsTab").hide();
+                        $(".ratingsFormTab").show();
+                        $("#showForm").hide();
+                        $("#showRatings").show();
+                    });
+                });
+            </script>
+
+        </div>
+    </div>
+{% endblock %}
