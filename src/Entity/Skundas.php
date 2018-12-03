@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Skundas
@@ -46,19 +47,20 @@ class Skundas
     /**
      * @var \Vartotojas
      *
-     * @ORM\ManyToOne(targetEntity="Vartotojas")
+     * @ORM\ManyToOne(targetEntity="Vartotojas", inversedBy="gautiSkundai")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_gavejas", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="fk_gavejas", referencedColumnName="id", nullable=false)
      * })
+     * @Assert\NotNull(message="Vartotojas su nuordytu id neegzistuoja!")
      */
     private $fkGavejas;
 
     /**
      * @var \Vartotojas
      *
-     * @ORM\ManyToOne(targetEntity="Vartotojas")
+     * @ORM\ManyToOne(targetEntity="Vartotojas", inversedBy="parasytiSkundai")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_pareiskejas", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="fk_pareiskejas", referencedColumnName="id", nullable=false)
      * })
      */
     private $fkPareiskejas;
@@ -68,7 +70,7 @@ class Skundas
      *
      * @ORM\ManyToOne(targetEntity="SkundoTipas")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_skundo_tipas", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="fk_skundo_tipas", referencedColumnName="id", nullable=false)
      * })
      */
     private $fkSkundoTipas;
@@ -78,7 +80,7 @@ class Skundas
      *
      * @ORM\ManyToOne(targetEntity="Busena")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_busena", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="fk_busena", referencedColumnName="id", nullable=false)
      * })
      */
     private $fkBusena;

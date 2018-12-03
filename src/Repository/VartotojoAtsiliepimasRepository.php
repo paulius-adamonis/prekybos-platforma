@@ -19,6 +19,27 @@ class VartotojoAtsiliepimasRepository extends ServiceEntityRepository
         parent::__construct($registry, VartotojoAtsiliepimas::class);
     }
 
+    /**
+     * @param $userId
+     * @return double
+     */
+    public function getAverageRating($userId)
+    {
+        // automatically knows to select Products
+        // the "p" is an alias you'll use in the rest of the query
+        $qb = $this->createQueryBuilder('v')
+            ->select("avg(v.reitingas) as rating_avg")
+            ->where('v.fkGavejas = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $qb;
+
+        // to get just one result:
+        // $product = $qb->setMaxResults(1)->getOneOrNullResult();
+    }
+
     // /**
     //  * @return VartotojoAtsiliepimas[] Returns an array of VartotojoAtsiliepimas objects
     //  */
