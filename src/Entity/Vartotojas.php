@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -63,7 +65,7 @@ class Vartotojas implements UserInterface
     private $telNr;
 
     /**
-     * @ORM\Column(name="role", type="json", nullable=false)
+     * @ORM\Column(name="role", type="text", nullable=false)
      */
     private $roles = [];
 
@@ -74,7 +76,46 @@ class Vartotojas implements UserInterface
      */
     private $arAktyvus = '1';
 
-	/**
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Skundas", mappedBy="fkPareiskejas")
+     */
+    private $parasytiSkundai;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Skundas", mappedBy="fkGavejas")
+     */
+    private $gautiSkundai;
+
+
+    public function __construct()
+    {
+        $this->parasytiSkundai = new ArrayCollection();
+        $this->gautiSkundai = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection|Skundas[]
+     */
+    public function getParasytusSkundus(): Collection{
+        return $this->parasytiSkundai;
+    }
+
+    public function addParasytaSkunda(Skundas $skundas){
+        $this->parasytiSkundai->add($skundas);
+    }
+
+    /**
+     * @return Collection|Skundas[]
+     */
+    public function getGautusSkundus(): Collection{
+        return $this->gautiSkundai;
+    }
+
+    public function addGautaSkunda(Skundas $skundas){
+        $this->gautiSkundai->add($skundas);
+    }
+
+    /**
      * A visual identifier that represents this user.
      *
      * @see UserInterface
@@ -89,14 +130,19 @@ class Vartotojas implements UserInterface
      */
     public function getRoles(): array
     {
-        return array_unique($this->roles);
+        return [$this->getRole()];
     }
 
-    public function setRoles(array $roles): self
+    public function setRole($roles): self
     {
         $this->roles = $roles;
 
         return $this;
+    }
+
+    public function getRole()
+    {
+        return $this->roles;
     }
 
     /**

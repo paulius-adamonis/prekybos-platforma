@@ -48,3 +48,55 @@
     height: 800px;
     width: 100%;
 }
+
+.duk{
+    margin-bottom: 20px;
+}
+
+.duk-header{
+    padding: .3125rem 0 0 0;
+    background-color: #009688 !important;
+}
+
+.duk-button {
+    position: relative;
+    margin-bottom: .3125rem;
+    font-size: .875rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    cursor: pointer;
+    border: 0;
+    outline: 0;
+    transition: box-shadow .2s cubic-bezier(.4, 0, 1, 1), background-color .2s cubic-bezier(.4, 0, .2, 1), color .2s cubic-bezier(.4, 0, .2, 1);
+    will-change: box-shadow, transform;
+    color: rgba(255, 255, 255, 1);
+    background-color: transparent;
+    border-color: #ccc;
+}
+
+.duk-button.active, .duk-button.focus, .duk-button:active, .duk-button:focus, .duk-button:hover, .open > .duk-button.dropdown-toggle {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.duk-button.active.focus, .duk-button.active:focus, .duk-button.active:hover, .duk-button:active.focus, .duk-button:active:focus, .duk-button:active:hover, .open > .duk-button.dropdown-toggle.focus, .open > .duk-button.dropdown-toggle:focus, .open > .duk-button.dropdown-toggle:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.open > .duk-button.dropdown-toggle.bmd-btn-icon {
+    color: inherit;
+    background-color: transparent
+}
+
+.rightcolumn{
+    width: 100%;
+}
+.leftcolumn{
+    text-align: center;
+    width: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.ratingCard{
+    padding: 5px 10px 5px 10px;
+}

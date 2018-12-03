@@ -48,7 +48,7 @@ class Klausimas
      *
      * @ORM\ManyToOne(targetEntity="Vartotojas")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_atsakytojas", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="fk_atsakytojas", referencedColumnName="id", nullable=true)
      * })
      */
     private $fkAtsakytojas;
@@ -58,7 +58,7 @@ class Klausimas
      *
      * @ORM\ManyToOne(targetEntity="KlausimoTipas")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_klausimo_tipas", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="fk_klausimo_tipas", referencedColumnName="id", nullable=false)
      * })
      */
     private $fkKlausimoTipas;
@@ -68,7 +68,7 @@ class Klausimas
      *
      * @ORM\ManyToOne(targetEntity="Vartotojas")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="fk_klausiantysis", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="fk_klausiantysis", referencedColumnName="id", nullable=false)
      * })
      */
     private $fkKlausiantysis;
