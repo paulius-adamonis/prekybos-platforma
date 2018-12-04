@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\VartotojoAtsiliepimas;
 use Brokoskokoli\StarRatingBundle\Form\RatingType;
+use Brokoskokoli\StarRatingBundle\Form\StarRatingType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -23,7 +24,7 @@ class VartotojoAtsiliepimasType extends AbstractType
                     'style' => 'min-height: 100px; max-height: 300px; margin-top:15px;'
                 )
             ))
-            ->add('reitingas', RatingType::class, [
+            ->add('reitingas', StarRatingType::class, [
                 'label' => 'Uždėkite vertinimą:'
             ])
             ->add('submit', SubmitType::class, array(
