@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <a class="btn btn-primary btn-outline-primary" href="{{ path('new_sandelis') }}">Pridėti sandėlį</a>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Adresas</th>
+            <th>Veiksmai</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for sandelis in sandeliai %}
+            <tr>
+                <td>{{ sandelis.adresas }}</td>
+                <td><a class="btn btn-primary btn-outline-primary" href="{{ path('sandelis') }}/{{ sandelis.id }}">Parodyti</a>
+                    <a class="btn btn-primary btn-outline-primary" href="{{ path('sandelis') }}/edit/{{ sandelis.id }}">Tvarkyti</a>
+                    <a class="btn btn-primary btn-outline-primary" style="color: red" href="{{ path('sandelis') }}/remove/{{ sandelis.id }}">Naikinti</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
