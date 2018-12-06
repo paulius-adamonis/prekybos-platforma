@@ -1,0 +1,21 @@
+{% extends 'turgus/landing.base.twig' %}
+
+{% block body %}
+    <select>
+        <option value="0" selected>Rūšiuoti pagal</option>
+        <option value="priceMin">Mažiausią kainą</option>
+        <option value="priceMax">Didžiausią kainą</option>
+        <option value="dateMin">Naujausius</option>
+        <option value="dateMax">Seniausius</option>
+    </select>
+    {% for product in products %}
+        <div class="product">
+            <img src="{{ asset('images/' ~ product.nuotrauka) }}">
+            <h5>{{ product.pavadinimas }}</h5>
+            <div class="product-price">
+                <span> {{ product.kaina }}€ </span>
+                <button>daugiau</button>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

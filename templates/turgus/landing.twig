@@ -1,0 +1,11 @@
+{% extends 'turgus/landing.base.twig' %}
+
+{% block body %}
+<ul>
+    {% set i = 0 %}
+    {% for category in categories %} 
+        <li class="category">{{ category.pavadinimas }} <span class="fas fa-chevron-circle-right right category-enter"></span> <span class="fas fa-fire right category-icon"></span><span class="right category-param">{{ hot_counts[i] }}</span> <span class="fas fa-box-open right category-icon"></span> <span class="right category-param">{{ counts[i] }}</span></li>
+    {% set i = i + 1 %}
+    {% endfor %}
+</ul>
+{% endblock %}
