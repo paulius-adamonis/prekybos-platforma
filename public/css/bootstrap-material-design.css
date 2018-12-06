@@ -4535,8 +4535,15 @@ tbody.collapse.show {
 
 .list-group-item.active {
     z-index: 2;
-    color: #fff;
-    background-color: #009688;
+    color: #009688;
+    text-decoration: underline;
+    border-color: #009688
+}
+
+.list-group-item.active:hover {
+    z-index: 2;
+    color: #004e47;
+    text-decoration: underline;
     border-color: #009688
 }
 

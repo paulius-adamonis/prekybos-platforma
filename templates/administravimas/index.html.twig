@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+{{ message }}
+{% endblock %}
+
+{% block sidenav %}
+    <a class="list-group-item" href="{{ path('admin_parduotuve') }}">E-parduotuvės valdymas</a>
+    <a class="list-group-item" href="{{ path('admin_turgus') }}">E-turgaus valdymas</a>
+    <a class="list-group-item" href="{{ path('admin_vartotojai') }}">Vartotojų valdymas</a>
+{% endblock %}
