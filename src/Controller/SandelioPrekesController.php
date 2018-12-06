@@ -65,28 +65,28 @@ class SandelioPrekesController extends AbstractController
     }
 
     /**
-     * @Route("/sandelis/{sandelioId}/preke/edit/{id}", name="edit_sandelis")
+     * @Route("/sandelis/{sandelioId}/preke/edit/{id}", name="edit_preke")
      * Method({"GET", "POST"})
      */
     public function edit(Request $request,$sandelioId, $id){
         $auth_checker = $this->get('security.authorization_checker');
         if($auth_checker->isGranted('ROLE_ADMIN')) {
-            $sandelis = $this->getDoctrine()->getRepository(Sandelis::class)->findOneBy(array(
+            $preke = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findOneBy(array(
                 'id' => $id
             ));
-            if ($sandelis !== null) {
-                $form = $this->createForm(SandelisType::class, $sandelis);
+            if ($preke !== null) {
+                $form = $this->createForm(SandelioPrekesType::class, $preke);
                 $form->handleRequest($request);
                 if ($form->isSubmitted() && $form->isValid()) {
                     $entityManager = $this->getDoctrine()->getManager();
                     $entityManager->flush();
-                    return $this->redirectToRoute('sandelis');
+                    return $this->redirect('/sandelis/'.$sandelioId);
                 }
                 return $this->render('sandelio_prekes/new.html.twig', array(
                     'form' => $form->createView(),
-                    'title' => 'Tvarkyti sandėlį'));
+                    'title' => 'Tvarkyti prekę'));
             }
-            return $this->redirectToRoute('sandelis');
+            return $this->redirect('/sandelis/'.$sandelioId);
         }
         else {
             return $this->redirectToRoute('app_main');
@@ -94,26 +94,26 @@ class SandelioPrekesController extends AbstractController
     }
 
     /**
-     * @Route("/sandelis/{sandelioId}/preke/remove/{id}", name="remove_sandelis")
+     * @Route("/sandelis/{sandelioId}/preke/remove/{id}", name="remove_preke")
      * Method({"GET"})
      */
     public function remove($sandelioId,$id) {
         $auth_checker = $this->get('security.authorization_checker');
         if($auth_checker->isGranted('ROLE_ADMIN')) {
-            $sandelis = $this->getDoctrine()->getRepository(Sandelis::class)->findOneBy(array(
+            $preke = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findOneBy(array(
                 'id' => $id
             ));
-            if ($sandelis !== null) {
+            if ($preke !== null) {
                 $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->remove($sandelis);
+                $entityManager->remove($preke);
                 $entityManager->flush();
                 $this->get('session')->getFlashBag()->add(
                     'successful',
                     'Sandelis sėkmingai pašalintas'
                 );
-                return $this->redirectToRoute('Sandelis');
+                return $this->redirect('/sandelis/'.$sandelioId);
             }
-            return $this->redirectToRoute('Sandelis');
+            return $this->redirect('/sandelis/'.$sandelioId);
         }
         else {
             return $this->redirectToRoute('app_main');
@@ -121,7 +121,7 @@ class SandelioPrekesController extends AbstractController
     }
 
     /**
-     * @Route("/sandelis/{sandelioId}/preke/{id}", name="sandelis_details")
+     * @Route("/sandelis/{sandelioId}/preke/{id}", name="preke_details")
      *
      */
     public function Show($sandelioId,$id)
@@ -130,13 +130,18 @@ class SandelioPrekesController extends AbstractController
         if($auth_checker->isGranted('ROLE_ADMIN') ||
             $auth_checker->isGranted('ROLE_SANDELIO_DARBUOTOJAS') ||
             $auth_checker->isGranted('ROLE_SANDELIO_VALDYTOJAS')) {
-            $sandelis = $this->getDoctrine()->getRepository(Sandelis::class)->findOneBy(array(
+            $preke = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findOneBy(array(
                 'id' => $id
             ));
-            if ($sandelis) {
-                return $this->render('sandelio_prekes/show.html.twig', array('sandelis' => $sandelis,
-                    'title' => 'Sandėlis'));
-            } else return $this->redirectToRoute('Sandelis');
+            $prekesPriklausymas = $this->getDoctrine()->getRepository(PrekiuPriklausymas::class)->findOneBy(array(
+                'fkSandelis' => $sandelioId,
+                'fkParduotuvesPreke' => $id
+            ));
+            if ($preke && $prekesPriklausymas) {
+                return $this->render('sandelio_prekes/show.html.twig', array('preke' => $preke,
+                    'title' => 'Prekė'));
+            } else
+                return $this->redirect('/sandelis/'.$sandelioId);
         }
         else {
             return $this->redirectToRoute('app_main');

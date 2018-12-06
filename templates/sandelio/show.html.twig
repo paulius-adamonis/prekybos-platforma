@@ -18,8 +18,10 @@
                 <td>{{ preke.pavadinimas }}</td>
                 <td>{{ preke.ikelimoData|date("Y-m-d") }}</td>
                 <td><a class="btn btn-primary btn-outline-primary" href="{{ path('sandelis') }}/{{ sandelioId }}/preke/{{ preke.id }}">Parodyti</a>
+                    {% if is_granted("ROLE_ADMIN") %}
                     <a class="btn btn-primary btn-outline-primary" href="{{ path('sandelis') }}/{{ sandelioId }}/preke/edit/{{ preke.id }}">Tvarkyti</a>
                     <a class="btn btn-primary btn-outline-primary" style="color: red" href="{{ path('sandelis') }}/{{ sandelioId }}/preke/remove/{{ preke.id }}">Naikinti</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
