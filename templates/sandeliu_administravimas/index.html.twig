@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'administravimas/parduotuve.html.twig' %}
 
 {% block body %}
     {% if successMessage %}
@@ -13,12 +13,6 @@
         </div>
     {% endif %}
     <div class="container" id="map" data-sandeliai="{{ sandeliai|json_encode }}"></div>
-{% endblock %}
-
-{% block sidenav %}
-    <a class="list-group-item active" href="#">E-parduotuvės valdymas</a>
-    <a class="list-group-item" href="#">E-turgaus valdymas</a>
-    <a class="list-group-item" href="#">Vartotojų valdymas</a>
 {% endblock %}
 
 {% block javascripts %}

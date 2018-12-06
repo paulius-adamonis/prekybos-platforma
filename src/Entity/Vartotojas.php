@@ -65,7 +65,7 @@ class Vartotojas implements UserInterface
     private $telNr;
 
     /**
-     * @ORM\Column(name="role", type="text", nullable=false)
+     * @ORM\Column(name="role", type="json", nullable=false)
      */
     private $roles = [];
 
@@ -130,7 +130,7 @@ class Vartotojas implements UserInterface
      */
     public function getRoles(): array
     {
-        return [$this->getRole()];
+        return $this->roles;
     }
 
     public function setRole($roles): self
