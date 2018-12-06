@@ -1,0 +1,28 @@
+{% extends 'administravimas/parduotuve.html.twig' %}
+
+{% block body %}
+    {% if prekes %}
+        <table class="table table-striped">
+            <tr>
+                <th>Pavadinimas</th>
+                <th>Aprašymas</th>
+                <th>Įkėlimo data</th>
+                <th></th>
+            </tr>
+            {% for preke in prekes %}
+                <tr>
+                    <td>{{ preke.pavadinimas }}</td>
+                    <td>{{ preke.aprasymas }}</td>
+                    <td>{{ preke.ikelimoData|date('Y-m-d') }}</td>
+                    <td>
+                        <a href="{{ path('admin_parduotuve_redaguotiPreke', {'prekesId': preke.id}) }}" class="btn btn-sm btn-light bg-primary">
+                            Redaguoti
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        Šiuo metu sistemoje nėra nei vienos prekės!
+    {% endif %}
+{% endblock %}

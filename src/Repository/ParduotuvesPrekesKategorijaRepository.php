@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\ParduotuvesPreke;
 use App\Entity\ParduotuvesPrekesKategorija;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -17,6 +18,28 @@ class ParduotuvesPrekesKategorijaRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, ParduotuvesPrekesKategorija::class);
+    }
+
+    public function findByPreke(ParduotuvesPreke $preke){
+        return $this->createQueryBuilder('k')
+            ->select('k')
+            ->from('App:PardPrekiuKategorijuPriklausymas', 'ppkp')
+            ->where('ppkp.fkParduotuvesPreke = :id')
+            ->setParameter('id', $preke->getId())
+            ->andWhere('ppkp.fkParduotuvesPrekesKategorija = k.id')
+            ->getQuery()->execute();
+    }
+
+    public function findPavadinimaiByPreke(ParduotuvesPreke $preke){
+        return array_column(
+            $this->createQueryBuilder('k')
+            ->select('k.pavadinimas')
+            ->from('App:PardPrekiuKategorijuPriklausymas', 'ppkp')
+            ->where('ppkp.fkParduotuvesPreke = :id')
+            ->setParameter('id', $preke->getId())
+            ->andWhere('ppkp.fkParduotuvesPrekesKategorija = k.id')
+            ->getQuery()->getScalarResult(),
+            'pavadinimas');
     }
 
     // /**

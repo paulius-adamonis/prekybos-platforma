@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * ParduotuvesPreke
@@ -37,7 +38,6 @@ class ParduotuvesPreke
     private $aprasymas;
 
     /**
-     * @var string|null
      *
      * @ORM\Column(name="nuotrauka", type="string", length=300, nullable=true)
      */
@@ -79,12 +79,12 @@ class ParduotuvesPreke
         return $this;
     }
 
-    public function getNuotrauka(): ?string
+    public function getNuotrauka()
     {
-        return $this->nuotrauka;
+        return new File('../public/images/'.$this->nuotrauka);
     }
 
-    public function setNuotrauka(?string $nuotrauka): self
+    public function setNuotrauka($nuotrauka)
     {
         $this->nuotrauka = $nuotrauka;
 
