@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row d-flex justify-content-center">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Prekių valdymas</h5>
+                    <a href="#" class="btn btn-light bg-primary btn-block">Šalinti prekę</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Kategorijų valdymas</h5>
+                    <a href="#" class="btn btn-light bg-primary btn-block">Šalinti kategoriją</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block sidenav %}
+    <a class="list-group-item" href="{{ path('admin_parduotuve') }}">E-parduotuvės valdymas</a>
+    <a class="list-group-item active" href="{{ path('admin_turgus') }}">E-turgaus valdymas</a>
+    <a class="list-group-item" href="{{ path('admin_vartotojai') }}">Vartotojų valdymas</a>
+{% endblock %}

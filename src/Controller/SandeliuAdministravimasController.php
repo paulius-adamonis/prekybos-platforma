@@ -17,7 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class SandeliuAdministravimasController extends AbstractController
 {
     /**
-     * @Route("/admin/sandeliai", name="admin_sandeliai")
+     * @Route("/admin/parduotuve/sandeliai", name="admin_sandeliai")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
