@@ -38,7 +38,7 @@ class RegistrationController extends AbstractController
             // ... do any other work - like sending them an email, etc
             // maybe set a "flash" success message for the user
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_main');
         }
 
         return $this->render(
