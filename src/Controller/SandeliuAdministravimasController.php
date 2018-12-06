@@ -52,7 +52,7 @@ class SandeliuAdministravimasController extends AbstractController
 
         $sandeliai = $this->getDoctrine()->getRepository(Sandelis::class)->findAll();
 
-        return $this->render('sandeliu_administravimas/index.html.twig', [
+        return $this->render('administravimas/sandeliu_administravimas/index.html.twig', [
             'title' => 'Sandėlių administravimas',
             'successMessage' => $successMessage,
             'errorMessage' => $errorMessage,
