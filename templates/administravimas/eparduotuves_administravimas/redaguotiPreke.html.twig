@@ -32,7 +32,11 @@
     <div class="row">
         <div class="col-sm-2"> {{ form_label(form.nuotrauka) }} </div>
         <div class="col-sm-4">
-            <img src="{{ asset('/images/'~preke.nuotrauka.basename) }}" style="width: 80%" />
+            {% if preke.nuotrauka %}
+                <img src="{{ asset('/images/'~preke.nuotrauka.basename) }}" style="width: 80%" />
+            {% else %}
+                Šiai prekei nuotrauka nepridėta!
+            {% endif %}
             {{ form_widget(form.nuotrauka) }}
             {{ form_errors(form.nuotrauka) }}
             {{ form_help(form.nuotrauka) }}
