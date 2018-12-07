@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * PrekiuUzsakymas
@@ -24,6 +25,7 @@ class PrekiuUzsakymas
 
     /**
      * @var int
+     * @Assert\NotBlank
      *
      * @ORM\Column(name="kiekis", type="integer", nullable=false)
      */

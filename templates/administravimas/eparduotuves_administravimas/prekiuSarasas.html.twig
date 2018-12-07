@@ -20,6 +20,7 @@
                 <th>Įkėlimo data</th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
             {% for preke in prekes %}
                 <tr>
@@ -32,10 +33,16 @@
                         </a>
                     </td>
                     <td>
+                        <a href="{{ path('admin_parduotuve_uzsakytiPreke', {'prekesId': preke.id}) }}" class="btn btn-sm btn-light bg-success">
+                            Užsakyti
+                        </a>
+                    </td>
+                    <td>
                         <a href="{{ path('admin_parduotuve_salintiPreke', {'prekesId': preke.id}) }}" class="btn btn-sm btn-light bg-danger">
                             Šalinti
                         </a>
                     </td>
+
                 </tr>
             {% endfor %}
         </table>

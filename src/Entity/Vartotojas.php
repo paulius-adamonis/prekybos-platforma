@@ -140,9 +140,24 @@ class Vartotojas implements UserInterface
         return $this;
     }
 
+    public function setRoles($roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
     public function getRole()
     {
         return $this->roles;
+    }
+
+    public function addRole($role){
+        $this->roles[] = $role;
+    }
+
+    public function removeRoles($roles){
+        $this->roles = array_diff($this->roles, $roles);
     }
 
     /**
