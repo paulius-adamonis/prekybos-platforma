@@ -1,0 +1,30 @@
+{% extends 'administravimas/parduotuve.html.twig' %}
+
+{% block body %}
+    {% if successMessage %}
+        <div class="alert alert-success alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Pavyko!</strong> {{ successMessage }}
+        </div>
+    {% elseif errorMessage %}
+        <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Klaida!</strong> {{ errorMessage }}
+        </div>
+    {% endif %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-sm-2"> {{ form_label(form.pavadinimas) }} </div>
+        <div class="col-sm">
+            {{ form_widget(form.pavadinimas) }}
+            {{ form_errors(form.pavadinimas) }}
+            {{ form_help(form.pavadinimas) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm d-flex justify-content-end">
+            <button type="submit" class="btn btn-sm btn-light bg-primary">Išsaugoti pakeitimus</button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

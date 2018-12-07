@@ -13,9 +13,11 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('bundles/starrating/css/rating.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
         <!-- JavaScript -->
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
         <script src="{{ asset('js/moment.js') }}"></script>
         <script src="{{ asset('js/bootstrap-datetimepicker.min.js') }}"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
         <script src="{{ asset('bundles/starrating/js/rating.js') }}"></script>
     </head>
     <body>
@@ -61,10 +63,10 @@
                     <a class="nav-link {{ 'duk' in route ? 'active' }}" href="{{ path('DUK') }}">DUK</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Sandėlių sistema</a>
+                    <a class="nav-link" href="{{ path('sandelis') }}">Sandėlių sistema</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Administravimas</a>
+                    <a class="nav-link {% if 'admin' in app.request.get('_route') %}active{% endif %}" href="{{ path('admin_main') }}">Administravimas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ 'skundai' in route ? 'active' }}" href="{{ path('skundai') }}">Skundai</a>
@@ -84,10 +86,7 @@
         </div>
         <div style="padding: 1rem">&nbsp</div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
-    <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
     {% block javascripts %}{% endblock %}
+    <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
     </body>
 </html>

@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <td>ID</td>
+                <td>{{ preke.id }}</td>
+            </tr>
+            <tr>
+                <td>Pavadinimas</td>
+                <td>{{ preke.pavadinimas }}</td>
+            </tr>
+            <tr>
+                <td>Įkėlimo data</td>
+                <td>{{ preke.ikelimoData|date("Y-m-d") }}</td>
+            </tr>
+            <tr>
+                <td>Aprašymas</td>
+                <td>{{ preke.aprasymas}}</td>
+            </tr>
+            <tr>
+                <td>Nuotrauka</td>
+                <td>{{ preke.nuotrauka}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <button class="btn btn-primary btn-outline-primary" onclick="history.go(-1);">Grizti</button>
+{% endblock %}

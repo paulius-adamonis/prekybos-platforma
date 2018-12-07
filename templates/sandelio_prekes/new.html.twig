@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+    <hr>
+    <button class="btn btn-primary btn-outline-primary" onclick="history.go(-1);">Grižti</button>
+{% endblock %}

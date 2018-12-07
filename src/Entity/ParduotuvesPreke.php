@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * ParduotuvesPreke
@@ -37,7 +38,6 @@ class ParduotuvesPreke
     private $aprasymas;
 
     /**
-     * @var string|null
      *
      * @ORM\Column(name="nuotrauka", type="string", length=300, nullable=true)
      */
@@ -49,6 +49,13 @@ class ParduotuvesPreke
      * @ORM\Column(name="ikelimo_data", type="date", nullable=false)
      */
     private $ikelimoData;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="ar_pasalinta", type="boolean", nullable=false, options={"default"="0"})
+     */
+    private $arPasalinta = '0';
 
     public function getId(): ?int
     {
@@ -79,12 +86,15 @@ class ParduotuvesPreke
         return $this;
     }
 
-    public function getNuotrauka(): ?string
+    public function getNuotrauka()
     {
-        return $this->nuotrauka;
+        if($this->nuotrauka)
+            return new File('../public/images/'.$this->nuotrauka);
+        else
+            return null;
     }
 
-    public function setNuotrauka(?string $nuotrauka): self
+    public function setNuotrauka($nuotrauka)
     {
         $this->nuotrauka = $nuotrauka;
 
@@ -101,6 +111,22 @@ class ParduotuvesPreke
         $this->ikelimoData = $ikelimoData;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isArPasalinta(): bool
+    {
+        return $this->arPasalinta;
+    }
+
+    /**
+     * @param bool $arPasalinta
+     */
+    public function setArPasalinta(bool $arPasalinta): void
+    {
+        $this->arPasalinta = $arPasalinta;
     }
 
 

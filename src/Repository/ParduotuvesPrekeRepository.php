@@ -19,6 +19,19 @@ class ParduotuvesPrekeRepository extends ServiceEntityRepository
         parent::__construct($registry, ParduotuvesPreke::class);
     }
 
+    public function findPrekesBySandelis($sandelioId){
+        return $this->getEntityManager()
+            ->createQuery('SELECT p.id, p.pavadinimas, p.aprasymas, p.nuotrauka, p.ikelimoData
+                                  FROM App\Entity\ParduotuvesPreke p
+                                inner join App\Entity\PrekiuPriklausymas pp
+                                inner join App\Entity\Sandelis s 
+                                  where pp.fkParduotuvesPreke = p.id 
+                                  and s.id = pp.fkSandelis
+                                and s.id = :sandelioId')
+            ->setParameter('sandelioId', $sandelioId)
+            ->getArrayResult();
+    }
+
     // /**
     //  * @return ParduotuvesPreke[] Returns an array of ParduotuvesPreke objects
     //  */
@@ -47,4 +60,5 @@ class ParduotuvesPrekeRepository extends ServiceEntityRepository
         ;
     }
     */
+
 }

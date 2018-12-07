@@ -1,0 +1,63 @@
+{% extends 'administravimas/parduotuve.html.twig' %}
+
+{% block body %}
+    {% if successMessage %}
+        <div class="alert alert-success alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Pavyko!</strong> {{ successMessage }}
+        </div>
+    {% elseif errorMessage %}
+        <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Klaida!</strong> {{ errorMessage }}
+        </div>
+    {% endif %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-sm-2"> {{ form_label(form.pavadinimas) }} </div>
+        <div class="col-sm">
+            {{ form_widget(form.pavadinimas) }}
+            {{ form_errors(form.pavadinimas) }}
+            {{ form_help(form.pavadinimas) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2"> {{ form_label(form.aprasymas) }} </div>
+        <div class="col-sm">
+            {{ form_widget(form.aprasymas) }}
+            {{ form_errors(form.aprasymas) }}
+            {{ form_help(form.aprasymas) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2"> {{ form_label(form.nuotrauka) }} </div>
+        <div class="col-sm-4">
+            {% if preke.nuotrauka %}
+                <img src="{{ asset('/images/'~preke.nuotrauka.basename) }}" style="width: 80%" />
+            {% else %}
+                Šiai prekei nuotrauka nepridėta!
+            {% endif %}
+            {{ form_widget(form.nuotrauka) }}
+            {{ form_errors(form.nuotrauka) }}
+            {{ form_help(form.nuotrauka) }}
+        </div>
+        <div class="col-sm-2">{{ form_label(form.kategorijos) }}</div>
+        <div class="col-sm-4">
+            {% for kategorija in form.kategorijos %}
+                {% if kategorija.vars.label in kategorijos %}
+                    <div>{{ form_row(kategorija, {'attr' : {'checked': ''}}) }}</div>
+                {% else %}
+                    <div>{{ form_row(kategorija) }}</div>
+                {% endif %}
+            {% endfor %}
+            {{ form_errors(form.kategorijos) }}
+            {{ form_help(form.kategorijos) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm d-flex justify-content-end">
+            <button type="submit" class="btn btn-sm btn-light bg-primary">Išsaugoti pakeitimus</button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
