@@ -138,6 +138,7 @@ class TurgausController extends AbstractController
             break;
         }
 
+        $selling = array();
         foreach ($products as $product) {
             if ($product->getId() == $productId){
                 $selling = $this->getDoctrine()->getRepository(TurgausPardavimas::class)->findBy(
@@ -148,11 +149,14 @@ class TurgausController extends AbstractController
             }
         }
 
-        $seller = $this->getDoctrine()->getRepository(Vartotojas::class)->findBy(
-            array(
-                'id' => $selling[0]->getFkPardavejas()
-            )
-        );
+        $seller = array();
+        if (sizeof($selling) > 0) {
+            $seller = $this->getDoctrine()->getRepository(Vartotojas::class)->findBy(
+                array(
+                    'id' => $selling[0]->getFkPardavejas()
+                )
+            );
+        }
 
         $comments = $this->getDoctrine()->getRepository(Komentaras::class)->findBy(
             array (
@@ -172,12 +176,18 @@ class TurgausController extends AbstractController
         }
         $commenters = array_values($commenters);
 
+        if (sizeof($seller) > 0) {
+            $seller = $seller[0];
+        } else {
+            $seller = '';
+        }
+
         return $this->render('turgus/products.twig', [
             'selected' => $type,
             'category' => $categoryArr[0],
             'products' => $products,
             'productId' => $productId,
-            'seller' => $seller[0],
+            'seller' => $seller,
             'comments' => $comments,
             'commenters' => $commenters
         ]);
