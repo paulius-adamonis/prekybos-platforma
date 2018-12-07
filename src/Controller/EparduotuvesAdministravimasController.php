@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\PardPrekiuKategorijuPriklausymas;
 use App\Entity\ParduotuvesPreke;
 use App\Entity\ParduotuvesPrekesKategorija;
+use App\Form\ParduotuvesPrekesKategorijaType;
 use App\Form\ParduotuvesPrekeType;
 use App\Service\FileUploader;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -21,6 +22,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  */
 class EparduotuvesAdministravimasController extends AbstractController
 {
+    /******************************************
+     *                Prekes
+     ******************************************/
+
     /**
      * @Route("admin/parduotuve/sukurtiPreke", name="admin_parduotuve_sukurtiPreke")
      * @param Request $request
@@ -47,8 +52,13 @@ class EparduotuvesAdministravimasController extends AbstractController
                 $entityManager->persist($preke);
                 $entityManager->flush();
             }
-            else
-                $errorMessage = "Prekės sukūrimas nesėkmingas.";
+            else{
+                $preke->setNuotrauka(null);
+                $successMessage = "Prekė sėkmingai sukurta!";
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($preke);
+                $entityManager->flush();
+            }
         }
         if($form->isSubmitted() && !$form->isValid())
             $errorMessage = "Prekės sukūrimas nesėkmingas.";
@@ -65,16 +75,25 @@ class EparduotuvesAdministravimasController extends AbstractController
      * @Route("admin/parduotuve/redaguotiPreke", name="admin_parduotuve_prekiuSarasas")
      */
     public function prekiuSarasas(){
-        $prekes = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findAll();
+        $successMessage = null;
+        $errorMessage = null;
+
+        $prekes = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findBy(['arPasalinta' => false]);
 
         return $this->render('administravimas/eparduotuves_administravimas/prekiuSarasas.html.twig' , [
             'title' => 'Redaguoti prekę',
+            'successMessage' => $successMessage,
+            'errorMessage' => $errorMessage,
             'prekes' => $prekes
         ]);
     }
 
     /**
      * @Route("admin/parduotuve/redaguotiPreke/{prekesId}", name="admin_parduotuve_redaguotiPreke")
+     * @param Request $request
+     * @param $prekesId
+     * @param FileUploader $fileUploader
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function redaguotiPreke(Request $request, $prekesId, FileUploader $fileUploader){
         $successMessage = null;
@@ -161,6 +180,143 @@ class EparduotuvesAdministravimasController extends AbstractController
             'preke' => $preke,
             'form' => $form->createView(),
             'kategorijos' => $turimosKategorijos
+        ]);
+    }
+
+    /**
+     * @Route("admin/parduotuve/salintiPreke/{prekesId}", name="admin_parduotuve_salintiPreke")
+     * @param $prekesId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function salintiPreke($prekesId){
+        $successMessage = null;
+        $errorMessage = null;
+
+        /** @var ParduotuvesPreke $preke */
+        $preke = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->find($prekesId);
+        $preke->setArPasalinta(true);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($preke);
+        $entityManager->flush();
+        $successMessage = 'Prekė sėkmingai pašalinta!';
+
+        $prekes = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findBy(['arPasalinta' => false]);
+
+        return $this->render('administravimas/eparduotuves_administravimas/prekiuSarasas.html.twig' , [
+            'title' => 'Redaguoti prekę',
+            'successMessage' => $successMessage,
+            'errorMessage' => $errorMessage,
+            'prekes' => $prekes
+        ]);
+    }
+
+    /******************************************
+     *              Kategorijos
+     ******************************************/
+
+    /**
+     * @Route("admin/parduotuve/sukurtiKategorija", name="admin_parduotuve_sukurtiKategorija")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function sukurtiKategorija(Request $request){
+        $successMessage = null;
+        $errorMessage = null;
+
+        $kategorija = new ParduotuvesPrekesKategorija();
+        $form = $this->createForm(ParduotuvesPrekesKategorijaType::class, $kategorija);
+
+        $form->handleRequest($request);
+        $form->getErrors();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $successMessage = "Kategorija sėkmingai sukurta!";
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($kategorija);
+            $entityManager->flush();
+        }
+        if($form->isSubmitted() && !$form->isValid())
+            $errorMessage = "Kategorijos sukūrimas nesėkmingas.";
+
+        return $this->render('administravimas/eparduotuves_administravimas/sukurtiKategorija.html.twig', [
+            'title' => 'Sukurti naują kategoriją',
+            'successMessage' => $successMessage,
+            'errorMessage' => $errorMessage,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("admin/parduotuve/redaguotiKategorija/{kategorijosId}", name="admin_parduotuve_redaguotiKategorija")
+     * @param Request $request
+     * @param $kategorijosId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function redaguotiKategorija(Request $request, $kategorijosId){
+        $successMessage = null;
+        $errorMessage = null;
+
+        $kategorija = $this->getDoctrine()->getRepository(ParduotuvesPrekesKategorija::class)->find($kategorijosId);
+        $form = $this->createForm(ParduotuvesPrekesKategorijaType::class, $kategorija);
+
+        $form->handleRequest($request);
+        $form->getErrors();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $successMessage = "Kategorija sėkmingai atnaujinta!";
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($kategorija);
+            $entityManager->flush();
+        }
+        if($form->isSubmitted() && !$form->isValid())
+            $errorMessage = "Kategorijos atnaujinimas nesėkmingas.";
+
+        return $this->render('administravimas/eparduotuves_administravimas/redaguotiKategorija.html.twig', [
+            'title' => 'Redagoti kategoriją',
+            'successMessage' => $successMessage,
+            'errorMessage' => $errorMessage,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("admin/parduotuve/redaguotiKategorija", name="admin_parduotuve_kategorijuSarasas")
+     */
+    public function kategorijuSarasas(){
+        $successMessage = null;
+        $errorMessage = null;
+
+        $kategorijos = $this->getDoctrine()->getRepository(ParduotuvesPrekesKategorija::class)->findBy(['arPasalinta' => false]);
+
+        return $this->render('administravimas/eparduotuves_administravimas/kategorijuSarasas.html.twig' , [
+            'title' => 'Redaguoti kategoriją',
+            'successMessage' => $successMessage,
+            'errorMessage' => $errorMessage,
+            'kategorijos' => $kategorijos
+        ]);
+    }
+
+    /**
+     * @Route("admin/parduotuve/salintiKategorija/{kategorijosId}", name="admin_parduotuve_salintiKategorija")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function salintiKategorija($kategorijosId){
+        $successMessage = null;
+        $errorMessage = null;
+
+        /** @var ParduotuvesPrekesKategorija $kategorija */
+        $kategorija = $this->getDoctrine()->getRepository(ParduotuvesPrekesKategorija::class)->find($kategorijosId);
+        $kategorija->setArPasalinta(true);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($kategorija);
+        $entityManager->flush();
+        $successMessage = 'Kategorija sėkmingai pašalinta!';
+
+        $kategorijos = $this->getDoctrine()->getRepository(ParduotuvesPrekesKategorija::class)->findBy(['arPasalinta' => false]);
+
+        return $this->render('administravimas/eparduotuves_administravimas/kategorijuSarasas.html.twig' , [
+            'title' => 'Redaguoti kategoriją',
+            'successMessage' => $successMessage,
+            'errorMessage' => $errorMessage,
+            'kategorijos' => $kategorijos
         ]);
     }
 }

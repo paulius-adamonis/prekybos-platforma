@@ -50,6 +50,13 @@ class ParduotuvesPreke
      */
     private $ikelimoData;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="ar_pasalinta", type="boolean", nullable=false, options={"default"="0"})
+     */
+    private $arPasalinta = '0';
+
     public function getId(): ?int
     {
         return $this->id;
@@ -81,7 +88,10 @@ class ParduotuvesPreke
 
     public function getNuotrauka()
     {
-        return new File('../public/images/'.$this->nuotrauka);
+        if($this->nuotrauka)
+            return new File('../public/images/'.$this->nuotrauka);
+        else
+            return null;
     }
 
     public function setNuotrauka($nuotrauka)
@@ -101,6 +111,22 @@ class ParduotuvesPreke
         $this->ikelimoData = $ikelimoData;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isArPasalinta(): bool
+    {
+        return $this->arPasalinta;
+    }
+
+    /**
+     * @param bool $arPasalinta
+     */
+    public function setArPasalinta(bool $arPasalinta): void
+    {
+        $this->arPasalinta = $arPasalinta;
     }
 
 

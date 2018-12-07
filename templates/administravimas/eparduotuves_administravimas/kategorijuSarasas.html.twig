@@ -12,27 +12,23 @@
             <strong>Klaida!</strong> {{ errorMessage }}
         </div>
     {% endif %}
-    {% if prekes %}
+    {% if kategorijos %}
         <table class="table table-striped">
             <tr>
                 <th>Pavadinimas</th>
-                <th>Aprašymas</th>
-                <th>Įkėlimo data</th>
                 <th></th>
                 <th></th>
             </tr>
-            {% for preke in prekes %}
+            {% for kategorija in kategorijos %}
                 <tr>
-                    <td>{{ preke.pavadinimas }}</td>
-                    <td>{{ preke.aprasymas }}</td>
-                    <td>{{ preke.ikelimoData|date('Y-m-d') }}</td>
+                    <td>{{ kategorija.pavadinimas }}</td>
                     <td>
-                        <a href="{{ path('admin_parduotuve_redaguotiPreke', {'prekesId': preke.id}) }}" class="btn btn-sm btn-light bg-primary">
+                        <a href="{{ path('admin_parduotuve_redaguotiKategorija', {'kategorijosId': kategorija.id}) }}" class="btn btn-sm btn-light bg-primary">
                             Redaguoti
                         </a>
                     </td>
                     <td>
-                        <a href="{{ path('admin_parduotuve_salintiPreke', {'prekesId': preke.id}) }}" class="btn btn-sm btn-light bg-danger">
+                        <a href="{{ path('admin_parduotuve_salintiKategorija', {'kategorijosId': kategorija.id}) }}" class="btn btn-sm btn-light bg-danger">
                             Šalinti
                         </a>
                     </td>
