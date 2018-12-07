@@ -5,19 +5,31 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\PardavimoTipas;
 use App\Entity\TurgPrekesKategorija;
 use App\Entity\TurgausPreke;
+use App\Entity\TurgausPardavimas;
+use App\Entity\Vartotojas;
+use App\Entity\Komentaras;
 
 class TurgausController extends AbstractController
 {
     /**
      * @Route("/turgus/{type}"), methods={"GET"})
      */
-    public function landing($type = 0)
+    public function landing($type = 'Įprastas')
     {
+        $categoryArr = $this->getDOctrine()->getRepository(PardavimoTipas::class)->findBY(
+            array(
+                'pavadinimas' => $type
+            )
+        );
+
+        $categoryArr = array_values($categoryArr);
+
         $categories = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(
             array(
-                'fkPardavimoTipas' => $type
+                'fkPardavimoTipas' => $categoryArr[0]->getId()
             )
         );
         
@@ -55,19 +67,119 @@ class TurgausController extends AbstractController
     }   
 
     /**
-     * @Route("/turgus/prekes/{type}/{category}"), methods={"GET"})
+     * @Route("/turgus/prekes/{type}/{category}/{sort}/{productId}"), methods={"GET"})
      */
-    public function products($type = 0, $category = 0)
+    public function products($type = 'Įprastas', $category = '0', $sort = '0', $productId = '-1')
     {
-        $products = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+        $typeArr = $this->getDoctrine()->getRepository(PardavimoTipas::class)->findBy(
             array(
-                'fkTurgPrekesKategorija' => $category
+                'pavadinimas' => $type
             )
         );
 
+        $typeArr = array_values($typeArr);
+
+        $categoryArr = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(
+            array(
+                'fkPardavimoTipas' => $typeArr[0]->getId(),
+                'pavadinimas' => $category
+            )
+        );
+
+        $products = array();
+
+        switch($sort) {
+        case '0':
+            $products = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                array(
+                    'fkTurgPrekesKategorija' => $categoryArr[0]->getId()
+                )
+            );
+            break;
+        case 'mažiausia_kaina':
+            $products = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                array(
+                    'fkTurgPrekesKategorija' => $categoryArr[0]->getId()
+                ),
+                array(
+                    'kaina' => 'ASC'
+                )
+            );
+            break;
+        case 'didžiausia_kaina':
+            $products = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                array(
+                    'fkTurgPrekesKategorija' => $categoryArr[0]->getId()
+                ),
+                array(
+                    'kaina' => 'DESC'
+                )
+            );
+            break;
+        case 'naujausi':
+            $products = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                array(
+                    'fkTurgPrekesKategorija' => $categoryArr[0]->getId()
+                ),
+                array(
+                    'data' => 'DESC'
+                )
+            );
+            break;
+        case 'seniausi':
+            $products = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                array(
+                    'fkTurgPrekesKategorija' => $categoryArr[0]->getId()
+                ),
+                array(
+                    'data' => 'ASC'
+                )
+            );
+            break;
+        }
+
+        foreach ($products as $product) {
+            if ($product->getId() == $productId){
+                $selling = $this->getDoctrine()->getRepository(TurgausPardavimas::class)->findBy(
+                    array(
+                        'fkTurgausPreke' => $productId
+                    )
+                );
+            }
+        }
+
+        $seller = $this->getDoctrine()->getRepository(Vartotojas::class)->findBy(
+            array(
+                'id' => $selling[0]->getFkPardavejas()
+            )
+        );
+
+        $comments = $this->getDoctrine()->getRepository(Komentaras::class)->findBy(
+            array (
+                'fkTurgausPreke' => $productId
+            )
+        );
+        $comments = array_values($comments);
+
+        $commenters = array();
+        foreach($comments as $comment) {
+            $commenter = $this->getDoctrine()->getRepository(Vartotojas::class)->findBy(
+                array (
+                    'id' => $comment->getFkVartotojas()
+                )
+            );
+            array_push($commenters, $commenter[0]);
+        }
+        $commenters = array_values($commenters);
+
         return $this->render('turgus/products.twig', [
             'selected' => $type,
-            'products' => $products
+            'category' => $categoryArr[0],
+            'products' => $products,
+            'productId' => $productId,
+            'seller' => $seller[0],
+            'comments' => $comments,
+            'commenters' => $commenters
         ]);
     }
 }

@@ -1,12 +1,12 @@
 {% extends 'turgus/landing.base.twig' %}
 
 {% block body %}
-    <select>
-        <option value="0" selected>Rūšiuoti pagal</option>
-        <option value="priceMin">Mažiausią kainą</option>
-        <option value="priceMax">Didžiausią kainą</option>
-        <option value="dateMin">Naujausius</option>
-        <option value="dateMax">Seniausius</option>
+    <select class="order-by" onchange="location = this.value;">
+        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/0'}}">Rūšiuoti pagal</option>
+        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/mažiausia_kaina'}}">Mažiausią kainą</option>
+        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/didžiausia_kaina'}}">Didžiausią kainą</option>
+        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/naujausi'}}">Naujausius</option>
+        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/seniausi'}}">Seniausius</option>
     </select>
     {% for product in products %}
         <div class="product">
@@ -17,5 +17,26 @@
                 <button>daugiau</button>
             </div>
         </div>
+    {% endfor %}
+    {% for product in products %}
+        {% if product.id == productId %}
+            <div>
+                <img src="{{ asset('images/' ~ product.nuotrauka) }}">
+                <h5>{{ product.pavadinimas }}</h5>
+                <p>{{ product.aprasymas }}</p>
+                <span>{{ product.kaina }}€</span>
+                <button>komentuoti</button>
+                <p>{{ seller.telNr }}</p>
+                <p>{{ seller.elPastas }}</p>
+                <p>{{ seller.vardas }} {{ seller.pavarde }}</p>
+                <h5>Komentarai</h5>
+                {% set i = 0 %}
+                {% for comment in comments %}
+                    <h6>{{ commenters[i].vardas }} {{ commenters[i].pavarde }}</h6>
+                    <p>{{ comment.tekstas}}</p>
+                    {% set i = i + 1 %}
+                {% endfor %}
+            </div>
+        {% endif %}
     {% endfor %}
 {% endblock %}
