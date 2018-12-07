@@ -1,0 +1,49 @@
+{% extends 'administravimas/parduotuve.html.twig' %}
+
+{% block body %}
+    {% if successMessage %}
+        <div class="alert alert-success alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Pavyko!</strong> {{ successMessage }}
+        </div>
+    {% elseif errorMessage %}
+        <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Klaida!</strong> {{ errorMessage }}
+        </div>
+    {% endif %}
+    {% if sandeliuValdytojai %}
+        <table class="table table-striped">
+            <tr>
+                <th>Vardas</th>
+                <th>Pavardė</th>
+                <th>El. paštas</th>
+                <th>Tel. numeris</th>
+                <th></th>
+                <th></th>
+            </tr>
+            {% for sandeliuValdytojas in sandeliuValdytojai %}
+                <tr>
+                    <td>{{ sandeliuValdytojas.vardas }}</td>
+                    <td>{{ sandeliuValdytojas.pavarde }}</td>
+                    <td>{{ sandeliuValdytojas.elPastas }}</td>
+                    <td>{{ sandeliuValdytojas.telNr }}</td>
+                    <td>
+                        <a class="btn btn-sm btn-light bg-primary" href="{{ path('admin_parduotuve_parinktiSandeliuValdytojuiSandeli', {'sandeliuValdytojoId': sandeliuValdytojas.id}) }}">
+                            Perkelti/Paskirti
+                        </a>
+                    </td>
+                    <td>
+                        <form method="post">
+                            <button class="btn btn-sm btn-light bg-danger" type="submit" name="sandeliuValdytojas" value="{{ sandeliuValdytojas.id }}">
+                                Išmesti
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        Šiuo metu sistemoje nėra nei vieno sandėlio valdytojo!
+    {% endif %}
+{% endblock %}
