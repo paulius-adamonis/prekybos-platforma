@@ -1,0 +1,43 @@
+{% extends 'administravimas/parduotuve.html.twig' %}
+
+{% block body %}
+    {% if successMessage %}
+        <div class="alert alert-success alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Pavyko!</strong> {{ successMessage }}
+        </div>
+    {% elseif errorMessage %}
+        <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Klaida!</strong> {{ errorMessage }}
+        </div>
+    {% endif %}
+    {% if vartotojai %}
+        <table class="table table-striped">
+            <tr>
+                <th>Vardas</th>
+                <th>Pavardė</th>
+                <th>El. paštas</th>
+                <th>Tel. numeris</th>
+                <th></th>
+            </tr>
+            {% for vartotojas in vartotojai %}
+                <tr>
+                    <td>{{ vartotojas.vardas }}</td>
+                    <td>{{ vartotojas.pavarde }}</td>
+                    <td>{{ vartotojas.elPastas }}</td>
+                    <td>{{ vartotojas.telNr }}</td>
+                    <td>
+                        <form method="post">
+                            <button class="btn btn-sm btn-light bg-primary" type="submit" name="darbininkas" value="{{ vartotojas.id }}">
+                                Pridėti
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        Šiuo metu sistemoje nėra nei vienos paprasto vartotojo!
+    {% endif %}
+{% endblock %}

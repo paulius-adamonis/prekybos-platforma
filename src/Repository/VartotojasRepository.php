@@ -32,12 +32,21 @@ class VartotojasRepository extends ServiceEntityRepository
                 ->andWhere('sp.fkVartotojas = v.id')
                 ->andWhere('v.roles LIKE :role')
                 ->setParameter('role', '%"ROLE_VALDYTOJAS"%')
+                ->andWhere('v.arAktyvus = 1')
                 ->getQuery()->getSingleResult();
         } catch (NonUniqueResultException $e) {
             return null;
         } catch (NoResultException $e){
             return null;
         }
+    }
+
+    public function findByRoles(String $roles){
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.roles LIKE :roles')
+            ->setParameter('roles', '%'.$roles.'%')
+            ->andWhere('v.arAktyvus = 1')
+            ->getQuery()->getResult();
     }
 
     // /**

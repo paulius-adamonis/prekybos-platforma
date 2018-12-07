@@ -1,0 +1,121 @@
+{% extends 'administravimas/parduotuve.html.twig' %}
+
+{% block body %}
+    {% if successMessage %}
+        <div class="alert alert-success alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Pavyko!</strong> {{ successMessage }}
+        </div>
+    {% elseif errorMessage %}
+        <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Klaida!</strong> {{ errorMessage }}
+        </div>
+    {% endif %}
+    <div class="container" id="map" data-sandeliai="{{ sandeliai|json_encode }}"></div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var map;
+        // Initialize and add the map
+        function initMap() {
+            var infoWindow = new google.maps.InfoWindow;
+            var sandeliai = JSON.parse(document.getElementById('map').dataset.sandeliai);
+            if(sandeliai.length > 0){
+                map = new google.maps.Map(document.getElementById('map'));
+                var latLngBounds = new google.maps.LatLngBounds();
+                Array.prototype.forEach.call(sandeliai, function(sandelis){
+                    latLngBounds.extend(sandelis);
+                    var marker = new google.maps.Marker({
+                        map: map,
+                        position: sandelis,
+                        title: sandelis.adresas
+                    });
+
+                    var infoContentDiv = document.createElement('div');
+                    infoContentDiv.className = "card";
+
+                    var header = document.createElement('h8');
+                    header.innerText = sandelis.adresas;
+
+                    var form = document.createElement('form');
+                    form.method = 'post';
+                    form.id = 'forma';
+
+                    var sandelisId = document.createElement('input');
+                    sandelisId.type = 'hidden';
+                    sandelisId.name = 'sandelis';
+                    form.appendChild(sandelisId);
+
+                    var button = document.createElement('button');
+                    button.className = 'btn btn-sm btn-outline-primary btn-primary';
+                    button.type = 'button';
+                    button.style.margin = '0';
+                    button.style.padding = '0';
+                    button.innerText = 'Pasirinkti';
+                    button.addEventListener('click', function(){
+                        saveData(sandelis)
+                    });
+                    form.appendChild(button);
+
+                    infoContentDiv.appendChild(header);
+                    infoContentDiv.appendChild(form);
+                    infoContentDiv.appendChild(document.createElement('br'));
+                    marker.addListener('click', function(){
+                        infoWindow.setContent(infoContentDiv);
+                        infoWindow.open(map, marker);
+                    });
+                });
+            } else {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 55.174775, lng: 24.326873},
+                    zoom: 7
+                });
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+
+                        infoWindow.setPosition(pos);
+                        infoWindow.setContent('Jūsų dabartinė vieta aptikta!');
+                        infoWindow.open(map);
+                        map.setCenter(pos);
+                        map.setZoom(12);
+                    }, function() {
+                        handleLocationError(true, infoWindow, map.getCenter());
+                    });
+                } else {
+                    // Browser doesn't support Geolocation
+                    handleLocationError(false, infoWindow, map.getCenter());
+                }
+            }
+
+            map.fitBounds(latLngBounds);
+        }
+
+        function saveData(sandelis){
+            var form = document.getElementById('forma');
+            form.elements['sandelis'].value = sandelis.id;
+            form.submit();
+        }
+
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation ?
+                'Klaida: Jūsų dabartinė vieta neaptikta!' :
+                'Klaida: Jūsų naršyklė nepalaiko dabartinės vietos aptikimo!');
+            infoWindow.open(map);
+        }
+    </script>
+    <!--Load the API from the specified URL
+    * The async attribute allows the browser to render the page while the API loads
+    * The key parameter will contain your own API key (which is not needed for this tutorial)
+    * The callback parameter executes the initMap() function
+    -->
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmDid1JbUslvXsz-JpO9NhIx1tRfyocgc&callback=initMap">
+    </script>
+{% endblock %}
