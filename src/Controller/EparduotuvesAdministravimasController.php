@@ -5,8 +5,12 @@ namespace App\Controller;
 use App\Entity\PardPrekiuKategorijuPriklausymas;
 use App\Entity\ParduotuvesPreke;
 use App\Entity\ParduotuvesPrekesKategorija;
+use App\Entity\PrekiuUzsakymas;
+use App\Entity\Sandelis;
+use App\Entity\Vartotojas;
 use App\Form\ParduotuvesPrekesKategorijaType;
 use App\Form\ParduotuvesPrekeType;
+use App\Form\PrekiuUzsakymasType;
 use App\Service\FileUploader;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -207,6 +211,56 @@ class EparduotuvesAdministravimasController extends AbstractController
             'successMessage' => $successMessage,
             'errorMessage' => $errorMessage,
             'prekes' => $prekes
+        ]);
+    }
+
+    /**
+     * @Route("admin/parduotuve/uzsakytiPreke/{prekesId}", name="admin_parduotuve_uzsakytiPreke")
+     * @param Request $request
+     * @param $prekesId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function uzsakytiPreke(Request $request, $prekesId){
+        $successMessage = null;
+        $errorMessage = null;
+
+        /** @var ParduotuvesPreke $preke */
+        $preke = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->find($prekesId);
+        $sandeliai = $this->getDoctrine()->getRepository(Sandelis::class)->findAll();
+
+        /** @var PrekiuUzsakymas $uzsakymas */
+        $uzsakymas = new PrekiuUzsakymas();
+        $form = $this->createForm(PrekiuUzsakymasType::class, $uzsakymas);
+
+        $form->handleRequest($request);
+        $form->getErrors();
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Sandelis $sandelis */
+            $sandelis = $this->getDoctrine()->getRepository(Sandelis::class)->find($request->get('prekiu_uzsakymas')['sandelis']);
+            /** @var Vartotojas $valdytojas */
+            $valdytojas = $this->getDoctrine()->getRepository(Vartotojas::class)->findValdytojasBySandelis($sandelis);
+            if($valdytojas){
+                $uzsakymas->setFkSandelis($sandelis);
+                $uzsakymas->setFkVartotojas($valdytojas);
+                $uzsakymas->setFkParduotuvesPreke($preke);
+
+                $successMessage = "Prekių sėkmingai užsakyta!";
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($uzsakymas);
+                $entityManager->flush();
+            } else {
+                $errorMessage = "Prekių užsakymas nesėkmingas. Pasirinktas sandėlis neturi priskirto valdytojo.";
+            }
+        }
+        if($form->isSubmitted() && !$form->isValid())
+            $errorMessage = "Prekių užsakymas nesėkmingas.";
+
+        return $this->render('administravimas/eparduotuves_administravimas/uzsakytiPreke.html.twig' , [
+            'title' => 'Užsakyti prekių',
+            'successMessage' => $successMessage,
+            'errorMessage' => $errorMessage,
+            'form' => $form->createView(),
+            'sandeliai' => $sandeliai
         ]);
     }
 

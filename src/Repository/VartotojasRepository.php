@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Sandelis;
 use App\Entity\Vartotojas;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -17,6 +20,24 @@ class VartotojasRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Vartotojas::class);
+    }
+
+    public function findValdytojasBySandelis(Sandelis $sandelis){
+        try {
+            return $this->createQueryBuilder('v')
+                ->select('v')
+                ->from('App:SandeliuPriklausymas', 'sp')
+                ->where('sp.fkSandelis = :id')
+                ->setParameter('id', $sandelis->getId())
+                ->andWhere('sp.fkVartotojas = v.id')
+                ->andWhere('v.roles LIKE :role')
+                ->setParameter('role', '%"ROLE_VALDYTOJAS"%')
+                ->getQuery()->getSingleResult();
+        } catch (NonUniqueResultException $e) {
+            return null;
+        } catch (NoResultException $e){
+            return null;
+        }
     }
 
     // /**
