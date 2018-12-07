@@ -69,8 +69,10 @@ class DarbininkuAdministravimasController extends AbstractController
             if($darbinikas){
                 $successMessage = "Darbininkas sėkmingai atleistas.";
                 $darbinikas->removeRoles(['ROLE_DARBININKAS']);
+                $priklausymas = $this->getDoctrine()->getRepository(SandeliuPriklausymas::class)->findOneBy(['fkVartotojas' => $darbinikas]);
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($darbinikas);
+                $entityManager->remove($priklausymas);
                 $entityManager->flush();
             } else
                 $errorMessage = "Darbininko atleidimas nesėkmingas.";
