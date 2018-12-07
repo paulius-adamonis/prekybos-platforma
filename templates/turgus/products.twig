@@ -14,28 +14,37 @@
             <h5>{{ product.pavadinimas }}</h5>
             <div class="product-price">
                 <span> {{ product.kaina }}€ </span>
-                <button>daugiau</button>
+                {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+                <button onclick="{{'window.location.href = \'' ~ currentPath ~ '/' ~ product.id  ~ '\''}}">daugiau</button>
             </div>
         </div>
     {% endfor %}
     {% for product in products %}
         {% if product.id == productId %}
-            <div>
+            <div class="overlay">
+            </div>
+            <div class="product-card">
                 <img src="{{ asset('images/' ~ product.nuotrauka) }}">
-                <h5>{{ product.pavadinimas }}</h5>
-                <p>{{ product.aprasymas }}</p>
-                <span>{{ product.kaina }}€</span>
-                <button>komentuoti</button>
-                <p>{{ seller.telNr }}</p>
-                <p>{{ seller.elPastas }}</p>
-                <p>{{ seller.vardas }} {{ seller.pavarde }}</p>
-                <h5>Komentarai</h5>
-                {% set i = 0 %}
-                {% for comment in comments %}
-                    <h6>{{ commenters[i].vardas }} {{ commenters[i].pavarde }}</h6>
-                    <p>{{ comment.tekstas}}</p>
-                    {% set i = i + 1 %}
-                {% endfor %}
+                <div class="product-card-info">
+                    <h5>{{ product.pavadinimas }}</h5>
+                    <p class="product-card-resume">{{ product.aprasymas }}</p>
+                </div>
+                <div class="seller-info">
+                    <p class="seller-phone">{{ seller.telNr }}</p>
+                    <p class="seller-email">{{ seller.elPastas }}</p>
+                    <p class="seller-name">{{ seller.vardas }} {{ seller.pavarde }}</p>
+                </div>
+                <div class="price-comments">
+                    <span class="card-price">{{ product.kaina }}€</span>
+                    <button class="card-button">komentuoti</button>
+                    <h5 class="comment-heading">Komentarai</h5>
+                    {% set i = 0 %}
+                    {% for comment in comments %}
+                        <h6 class="commenter">{{ commenters[i].vardas }} {{ commenters[i].pavarde }}</h6>
+                        <p class="comment">{{ comment.tekstas}}</p>
+                        {% set i = i + 1 %}
+                    {% endfor %}
+                </div>
             </div>
         {% endif %}
     {% endfor %}

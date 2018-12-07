@@ -101,6 +101,25 @@
     padding: 5px 10px 5px 10px;
 }
 
+.card-button {
+    background: #009688;
+    border: none;
+    border-radius: 2px;
+    color: #fff;
+    float: right;
+    height: 36px;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    width: 120px;
+}
+
+.card-price {
+    color: #009688;
+    font-size: 36px;
+    font-weight: 500;
+}
+
 .category {
     background: #009688;
     cursor: pointer;
@@ -166,6 +185,22 @@
     display: none;
 }
 
+.comment {
+    font-size: 14px;
+    margin-bottom: 2rem;
+}
+
+.comment-heading {
+    margin-top: 40px;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.commenter {
+    font-size: 18px;
+    font-weight: 500;
+}
+
 .order-by {
     background: transparent;
     border: none;
@@ -175,6 +210,46 @@
     font-size: 18px;
     font-weight: 500;
     text-transform: uppercase;
+}
+
+.seller-email {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.seller-info {
+    float: right;
+    text-align: right;
+    width: 200px;
+}
+
+.seller-name {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.seller-phone {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    opacity: 0.5;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.price-comments {
+    margin-top: 24px; 
+    width: 332px;
 }
 
 .product {
@@ -198,6 +273,38 @@
     font-size: 18px;
     margin-top: 8px;
     margin-left: 8px;
+}
+
+.product-card {
+    background: #fff;
+    left: 50%;
+    transform: translate(-50%, -200px);
+    top: 50%;
+    padding: 40px;
+    position: absolute;
+    width: 627px;
+    z-index: 2;
+}
+
+.product-card-info {
+    float: right;
+    width: 200px;
+}
+
+.product-card-info h5 {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.product-card-resume{
+    font-size: 14px;
+}
+
+.product-card img {
+    border: 1px solid #009688;
+    height: 332px;
+    object-fit: scale-down;
+    width: 332px;
 }
 
 .product-price {
