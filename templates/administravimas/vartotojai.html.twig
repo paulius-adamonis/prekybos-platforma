@@ -6,8 +6,8 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Moderatorių valdymas</h5>
-                    <a href="#" class="btn btn-light bg-primary btn-block">Priskirti naują moderatorių</a>
-                    <a href="#" class="btn btn-light bg-primary btn-block">Šalinti moderatorių</a>
+                    <a href="{{ path('admin_vartotojai_pridetiModeratoriu') }}" class="btn btn-light bg-primary btn-block">Priskirti naują moderatorių</a>
+                    <a href="{{ path('admin_vartotojai_salintiModeratoriu') }}" class="btn btn-light bg-primary btn-block">Šalinti moderatorių</a>
                 </div>
             </div>
         </div>
@@ -15,7 +15,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Vartotojų valdymas</h5>
-                    <a href="#" class="btn btn-light bg-primary btn-block">Išaktyvuoti vartotoją</a>
+                    <a href="{{ path('admin_vartotojai_isaktyvuotiVartotoja') }}" class="btn btn-light bg-primary btn-block">Išaktyvuoti vartotoją</a>
                 </div>
             </div>
         </div>
@@ -23,7 +23,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Nusiskundimai</h5>
-                    <a href="#" class="btn btn-light bg-primary btn-block">Peržiūrėti nusiskundimus</a>
+                    <a href="{{ path('admin_vartotojai_nusiskundimai') }}" class="btn btn-light bg-primary btn-block">Peržiūrėti nusiskundimus</a>
                 </div>
             </div>
         </div>

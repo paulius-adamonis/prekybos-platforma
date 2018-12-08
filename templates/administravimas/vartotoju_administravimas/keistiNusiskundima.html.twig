@@ -1,0 +1,71 @@
+{% extends 'administravimas/vartotojai.html.twig' %}
+
+{% block body %}
+    {% if successMessage %}
+        <div class="alert alert-success alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Pavyko!</strong> {{ successMessage }}
+        </div>
+    {% elseif errorMessage %}
+        <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Klaida!</strong> {{ errorMessage }}
+        </div>
+    {% endif %}
+    <div class="container-fluid">
+        <br>
+        <div class="row">
+            <div class="col-sm-2">
+                Pareiškėjas:
+            </div>
+            <div class="col-sm-4">
+                {{ skundas.fkPareiskejas.vardas }} {{ skundas.fkPareiskejas.pavarde }}
+            </div>
+            <div class="col-sm-2">
+                Data:
+            </div>
+            <div class="col-sm-4">
+                {{ skundas.data|date('Y-m-d') }}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-2">
+                Gavėjas:
+            </div>
+            <div class="col-sm-4">
+                {{ skundas.fkGavejas.vardas }} {{ skundas.fkGavejas.pavarde }}
+            </div>
+            <div class="col-sm-2">
+                Tipas:
+            </div>
+            <div class="col-sm-4">
+                {{ skundas.fkSkundoTipas.pavadinimas }}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-2">
+                Skundas:
+            </div>
+            <div class="col-sm">
+                {{ skundas.skundas }}
+            </div>
+        </div>
+        <hr>
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-sm-2">
+                Būsena:
+            </div>
+            <div class="col-sm-4">
+                {{ form_widget(form.fkBusena) }}
+                {{ form_errors(form.fkBusena) }}
+                {{ form_help(form.fkBusena) }}
+            </div>
+        </div>
+        <br>
+        <button class="btn btn-sm btn-light bg-primary" type="submit" style="float: right">Keisti būseną</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

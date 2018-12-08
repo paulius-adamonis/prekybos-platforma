@@ -49,6 +49,14 @@ class VartotojasRepository extends ServiceEntityRepository
             ->getQuery()->getResult();
     }
 
+    public function findByNotRoles(String $roles){
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.roles NOT LIKE :roles')
+            ->setParameter('roles', '%'.$roles.'%')
+            ->andWhere('v.arAktyvus = 1')
+            ->getQuery()->getResult();
+    }
+
     // /**
     //  * @return Vartotojas[] Returns an array of Vartotojas objects
     //  */
