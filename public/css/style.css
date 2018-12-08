@@ -347,16 +347,27 @@
     z-index: 2;
 }
 
-.form-card input, select {
+.form-card input, .form-card select {
     background: transparent;
     border: none;
     border-bottom: 2px solid #009688;
-    margin-top: 36px;
     width: 100%;
+}
+
+.form-card label {
+    margin-top: 36px;
 }
 
 .form-card select {
     cursor: pointer;
+}
+
+#form_aukciono_pabaiga_date_year,
+#form_aukciono_pabaiga_date_month,
+#form_aukciono_pabaiga_date_day,
+#form_aukciono_pabaiga_time_hour,
+#form_aukciono_pabaiga_time_minute {
+    width: 100px;
 }
 
 .form-card .card-button {

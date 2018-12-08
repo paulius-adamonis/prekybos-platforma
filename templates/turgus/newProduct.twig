@@ -25,25 +25,8 @@
     </div>
     <div class="form-card">
         <button class="close" onclick="window.history.back()"><span class="fas fa-window-close"></button>
-        <form>
-            <input type="text" placeholder="Prekės pavadinimas">
-            <input type="text" placeholder="Kaina">
-            <input type="text" placeholder="Kiekis">
-            <input type="text" placeholder="Aprašymas">
-            <select>
-                <option value="">Kategorija</option>
-                {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.pavadinimas }}</option>
-                {% endfor %}
-            </select>
-            <select>
-                <option value="">Pardavimo tipas</option>
-                {% for type in types %}
-                    <option value="{{ type.id }}">{{ type.pavadinimas }}</option>
-                {% endfor %}
-            </select>
-
-            <button class="card-button" type="submit">pridėti prekę</button>
-        </form>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
     </div>
 {%  endblock %}

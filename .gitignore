@@ -65,3 +65,5 @@
 ###< symfony/web-server-bundle ###
 
 .env
+public/images/
+src/Migrations/
