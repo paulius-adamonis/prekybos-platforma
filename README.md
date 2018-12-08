@@ -17,6 +17,14 @@
     Pavyzdys, kai vartotojas turi kelias roles (pvz kai vartotojas yra sandėlio valdytojas):
     ["ROLE_VALDYTOJAS", "ROLE_USER"]
 
+**Rolių pavyzdžiai:**
+
+    Vartotojui:         ["ROLE_USER"]
+    Darbininkui:        ["ROLE_USER", "ROLE_DARBININKAS"]
+    Valdytojui:         ["ROLE_USER", "ROLE_VALDYTOJAS"]
+    Moderatoriui:       ["ROLE_USER", "ROLE_MOD"]
+    Administratoriui:   ["ROLE_USER", "ROLE_MOD", "ROLE_ADMIN"]
+
 **Įrašų šalinimas**
 
 Bet kokių įrašų šalinimas realizjuoamas naudojant "soft delete", per įrašą *arPasalinta*.

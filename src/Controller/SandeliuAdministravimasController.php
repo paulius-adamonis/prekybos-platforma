@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Sandelis;
 use App\Form\SandelisType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -23,33 +25,51 @@ class SandeliuAdministravimasController extends AbstractController
      */
     public function index(Request $request)
     {
+        $tmp = null;
         $successMessage = null;
         $errorMessage = null;
 
         $sandelis = new Sandelis();
         $formAdd = $this->createForm(SandelisType::class, $sandelis);
 
-        $formAdd->handleRequest($request);
-        $formAdd->getErrors();
-        if ($formAdd->isSubmitted() && $formAdd->isValid()) {
-            $successMessage = "Sandėlis pridėtas sėkmingai!";
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($sandelis);
-            $entityManager->flush();
-        }
-        if ($formAdd->isSubmitted() && !$formAdd->isValid()) {
-            $errorMessage = "Sandelio pridėjimas nesėkmingas.";
+        $formEdit = $this->createform(SandelisType::class);
+        $formEdit->add('edit', HiddenType::class, ['mapped' => false]);
+        try{
+            $editId = $request->get('sandelis')['edit'];
+        } catch (\ErrorException $e){
+            $editId = null;
         }
 
-        $removeId = $request->get('remove');
-        if($removeId){
-            $sandelisSalinmui = $this->getDoctrine()->getRepository(Sandelis::class)->find($removeId);
-            $successMessage = "Sandėlis adresu ".$sandelisSalinmui->getAdresas()." sėkmingai pašalintas!";
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($sandelisSalinmui);
-            $entityManager->flush();
-        }
+        if($editId){
+            /** @var Sandelis $sandelis */
+            $sandelis = $this->getDoctrine()->getRepository(Sandelis::class)->find($editId);
 
+            $formEdit->handleRequest($request);
+            $formEdit->getErrors();
+            if ($formEdit->isSubmitted() && $formEdit->isValid()) {
+                $sandelis->setAdresas($request->get('sandelis')['adresas']);
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($sandelis);
+                $entityManager->flush();
+                $successMessage = "Sandėlis redaguotas sėkmingai!";
+            }
+            if ($formEdit->isSubmitted() && !$formEdit->isValid()) {
+                $errorMessage = "Sandelio redagavimas nesėkmingas.";
+            }
+        } else {
+            $formAdd->handleRequest($request);
+            $formAdd->getErrors();
+            if ($formAdd->isSubmitted() && $formAdd->isValid()) {
+                $successMessage = "Sandėlis pridėtas sėkmingai!";
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($sandelis);
+                $entityManager->flush();
+            }
+            if ($formAdd->isSubmitted() && !$formAdd->isValid()) {
+                $errorMessage = "Sandelio pridėjimas nesėkmingas.";
+            }
+        }
+        
         $sandeliai = $this->getDoctrine()->getRepository(Sandelis::class)->findAll();
 
         return $this->render('administravimas/sandeliu_administravimas/index.html.twig', [
@@ -57,7 +77,8 @@ class SandeliuAdministravimasController extends AbstractController
             'successMessage' => $successMessage,
             'errorMessage' => $errorMessage,
             'sandeliai' => $sandeliai,
-            'formAdd' => $formAdd->createView()
+            'formAdd' => $formAdd->createView(),
+            'formEdit' => $formEdit->createView()
         ]);
     }
 }

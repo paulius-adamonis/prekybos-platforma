@@ -1,4 +1,4 @@
-{% extends 'administravimas/parduotuve.html.twig' %}
+{% extends 'administravimas/vartotojai.html.twig' %}
 
 {% block body %}
     {% if successMessage %}
@@ -29,7 +29,7 @@
                     <td>{{ vartotojas.telNr }}</td>
                     <td>
                         <form method="post">
-                            <button class="btn btn-sm btn-light bg-primary" type="submit" name="darbininkas" value="{{ vartotojas.id }}">
+                            <button class="btn btn-sm btn-light bg-primary" type="submit" name="vartotojas" value="{{ vartotojas.id }}">
                                 Pridėti
                             </button>
                         </form>

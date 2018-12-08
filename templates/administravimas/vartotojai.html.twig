@@ -1,21 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Moderatorių valdymas</h5>
-                    <a href="#" class="btn btn-light bg-primary btn-block">Priskirti naują moderatorių</a>
-                    <a href="#" class="btn btn-light bg-primary btn-block">Šalinti moderatorių</a>
+    <div class="row d-flex justify-content-center">
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Moderatorių valdymas</h5>
+                        <a href="{{ path('admin_vartotojai_pridetiModeratoriu') }}" class="btn btn-light bg-primary btn-block">Priskirti naują moderatorių</a>
+                        <a href="{{ path('admin_vartotojai_salintiModeratoriu') }}" class="btn btn-light bg-primary btn-block">Šalinti moderatorių</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
         <div class="col-lg-4">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Vartotojų valdymas</h5>
-                    <a href="#" class="btn btn-light bg-primary btn-block">Išaktyvuoti vartotoją</a>
+                    <a href="{{ path('admin_vartotojai_isaktyvuotiVartotoja') }}" class="btn btn-light bg-primary btn-block">Išaktyvuoti vartotoją</a>
                 </div>
             </div>
         </div>
@@ -23,7 +25,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Nusiskundimai</h5>
-                    <a href="#" class="btn btn-light bg-primary btn-block">Peržiūrėti nusiskundimus</a>
+                    <a href="{{ path('admin_vartotojai_nusiskundimai') }}" class="btn btn-light bg-primary btn-block">Peržiūrėti nusiskundimus</a>
                 </div>
             </div>
         </div>
@@ -31,7 +33,9 @@
 {% endblock %}
 
 {% block sidenav %}
-    <a class="list-group-item" href="{{ path('admin_parduotuve') }}">E-parduotuvės valdymas</a>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a class="list-group-item" href="{{ path('admin_parduotuve') }}">E-parduotuvės valdymas</a>
+    {% endif %}
     <a class="list-group-item" href="{{ path('admin_turgus') }}">E-turgaus valdymas</a>
     <a class="list-group-item active" href="{{ path('admin_vartotojai') }}">Vartotojų valdymas</a>
 {% endblock %}

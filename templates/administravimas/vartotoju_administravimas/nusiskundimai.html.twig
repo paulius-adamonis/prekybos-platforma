@@ -1,0 +1,28 @@
+{% extends 'administravimas/vartotojai.html.twig' %}
+
+{% block body %}
+    {% if skundai %}
+        <table class="table table-striped">
+            <tr>
+                <th>Pareiškėjas</th>
+                <th>Gavėjas</th>
+                <th>Skundas</th>
+                <th></th>
+            </tr>
+            {% for skundas in skundai %}
+                <tr>
+                    <td>{{ skundas.fkPareiskejas.vardas }} {{ skundas.fkPareiskejas.pavarde }}</td>
+                    <td>{{ skundas.fkGavejas.vardas }} {{ skundas.fkGavejas.pavarde }}</td>
+                    <td>{{ skundas.skundas }}</td>
+                    <td>
+                        <a class="btn btn-sm btn-light bg-primary" href="{{ path('admin_vartotojai_keistiNusiskundima', {'skundoId' : skundas.id}) }}">
+                            Keisti būseną
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        Šiuo metu sistemoje nėra nei vieno skundo!
+    {% endif %}
+{% endblock %}

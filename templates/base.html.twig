@@ -33,9 +33,6 @@
             </header>
             <ul class="list-group">
                 {% block sidenav %}
-                    <a class="list-group-item" href="#">Link 1</a>
-                    <a class="list-group-item" href="#">Link 2</a>
-                    <a class="list-group-item" href="#">Link 3</a>
                 {% endblock %}
             </ul>
         </div>
@@ -65,9 +62,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('sandelis') }}">Sandėlių sistema</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if 'admin' in app.request.get('_route') %}active{% endif %}" href="{{ path('admin_main') }}">Administravimas</a>
-                </li>
+                {% if is_granted('ROLE_MOD') %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'admin' in app.request.get('_route') %}active{% endif %}" href="{{ path('admin_main') }}">Administravimas</a>
+                    </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link {{ 'skundai' in route ? 'active' }}" href="{{ path('skundai') }}">Skundai</a>
                 </li>
