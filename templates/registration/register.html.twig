@@ -2,13 +2,66 @@
 
 {% block body %}
     {{ form_start(form) }}
-    {{ form_row(form.vardas) }}
-    {{ form_row(form.pavarde) }}
-    {{ form_row(form.elPastas) }}
-    {{ form_row(form.telNr) }}
-    {{ form_row(form.plainPassword.first) }}
-    {{ form_row(form.plainPassword.second) }}
-
-    <button type="submit">Registruotis!</button>
+    <div class="row form-group">
+        <div class="col-sm-2">
+            {{ form_label(form.vardas) }}
+        </div>
+        <div class="col-sm">
+            {{ form_widget(form.vardas, {'attr':{'class':'form-control'}}) }}
+            {{ form_errors(form.vardas) }}
+            {{ form_help(form.vardas) }}
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-sm-2">
+            {{ form_label(form.pavarde) }}
+        </div>
+        <div class="col-sm">
+            {{ form_widget(form.pavarde, {'attr':{'class':'form-control'}}) }}
+            {{ form_errors(form.pavarde) }}
+            {{ form_help(form.pavarde) }}
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-sm-2">
+            {{ form_label(form.elPastas) }}
+        </div>
+        <div class="col-sm">
+            {{ form_widget(form.elPastas, {'attr':{'class':'form-control'}}) }}
+            {{ form_errors(form.elPastas) }}
+            {{ form_help(form.elPastas) }}
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-sm-2">
+            {{ form_label(form.telNr) }}
+        </div>
+        <div class="col-sm">
+            {{ form_widget(form.telNr, {'attr':{'class':'form-control'}}) }}
+            {{ form_errors(form.telNr) }}
+            {{ form_help(form.telNr) }}
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-sm-2">
+            {{ form_label(form.plainPassword.first) }}
+        </div>
+        <div class="col-sm">
+            {{ form_widget(form.plainPassword.first, {'attr':{'class':'form-control'}}) }}
+            {{ form_errors(form.plainPassword.first) }}
+            {{ form_help(form.plainPassword.first) }}
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-sm-2">
+            {{ form_label(form.plainPassword.second) }}
+        </div>
+        <div class="col-sm">
+            {{ form_widget(form.plainPassword.second, {'attr':{'class':'form-control'}}) }}
+            {{ form_errors(form.plainPassword.second) }}
+            {{ form_help(form.plainPassword.second) }}
+        </div>
+    </div>
+    <button class="btn btn-sm btn-light bg-primary" style="float: right" type="submit">Registruotis!</button>
     {{ form_end(form) }}
 {% endblock %}

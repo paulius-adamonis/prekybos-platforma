@@ -9,12 +9,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 /**
  * Class AdministravimasController
  * @package App\Controller
- * @IsGranted("ROLE_ADMIN")
  */
 class AdministravimasController extends AbstractController
 {
     /**
      * @Route("/admin", name="admin_main")
+     * @IsGranted("ROLE_MOD")
      */
     public function index()
     {
@@ -26,6 +26,7 @@ class AdministravimasController extends AbstractController
 
     /**
      * @Route("/admin/parduotuve", name="admin_parduotuve")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function parduotuvesValdymas()
     {
@@ -36,6 +37,7 @@ class AdministravimasController extends AbstractController
 
     /**
      * @Route("/admin/turgus", name="admin_turgus")
+     * @IsGranted("ROLE_MOD")
      */
     public function turgausValdymas()
     {
@@ -46,6 +48,7 @@ class AdministravimasController extends AbstractController
 
     /**
      * @Route("/admin/vartotojai", name="admin_vartotojai")
+     * @IsGranted("ROLE_MOD")
      */
     public function vartotojuValdymas()
     {

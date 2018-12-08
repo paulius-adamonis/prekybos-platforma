@@ -16,7 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 /**
  * Class VartotojuAdministravimasController
  * @package App\Controller
- * @IsGranted("ROLE_ADMIN")
+ * @IsGranted("ROLE_MOD")
  */
 class VartotojuAdministravimasController extends AbstractController
 {
@@ -24,6 +24,7 @@ class VartotojuAdministravimasController extends AbstractController
      * @Route("/admin/vartotojai/pridetiModeratoriu", name="admin_vartotojai_pridetiModeratoriu")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
+     * @IsGranted("ROLE_ADMIN")
      */
     public function pridetiModeratoriu(Request $request)
     {
@@ -55,6 +56,7 @@ class VartotojuAdministravimasController extends AbstractController
      * @Route("/admin/vartotojai/salintiModeratoriu", name="admin_vartotojai_salintiModeratoriu")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
+     * @IsGranted("ROLE_ADMIN")
      */
     public function salintiModeratoriu(Request $request)
     {
