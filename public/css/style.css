@@ -336,6 +336,33 @@
     z-index: 2;
 }
 
+.form-card {
+    background: #fff;
+    left: 50%;
+    transform: translate(-50%, -200px);
+    top: 50%;
+    padding: 40px;
+    position: absolute;
+    width: 447px;
+    z-index: 2;
+}
+
+.form-card input, select {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #009688;
+    margin-top: 36px;
+    width: 100%;
+}
+
+.form-card select {
+    cursor: pointer;
+}
+
+.form-card .card-button {
+    margin-top: 36px;
+}
+
 .product-card-info {
     float: right;
     width: 200px;
