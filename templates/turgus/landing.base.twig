@@ -3,15 +3,15 @@
 {% block heading %}
 <ul>
     <li class="category-label">
-        <input type="radio" name="category" id="sellings" {% if selected == 1 %} class="checked" {% endif %}>
+        <input type="radio" name="category" id="sellings" {% if selected | upper == 'įprastas' | upper %} class="checked" {% endif %}>
         <label for="sellings"><a href="/turgus/Įprastas"><span class="fas fa-shopping-cart"></span>Pardavimai</a></label>
     </li>
     <li class="category-label">
-        <input type="radio" name="category" id="auction" {% if selected == 2 %} class="checked" {% endif %}>
+        <input type="radio" name="category" id="auction" {% if selected | upper == 'aukcionas' | upper %} class="checked" {% endif %}>
         <label for="auction"><a href="/turgus/Aukcionas"><span class="fas fa-hammer"></span>Aukcionas</a></label>
     </li>
     <li class="category-label">
-        <input type="radio" name="category" id="exchange" {% if selected == 3 %} class="checked" {% endif %}>
+        <input type="radio" name="category" id="exchange" {% if selected | upper == 'mainai' | upper %} class="checked" {% endif %}>
         <label for="exchange"><a href="/turgus/Mainai"><span class="fas fa-hand-holding-usd"></span>Mainai</a></label>
     </li>
 </ul>

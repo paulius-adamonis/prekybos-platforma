@@ -185,6 +185,21 @@
     display: none;
 }
 
+.close {
+    color: #009688;
+    font-size: 18px;
+    margin-right: -24px;
+    margin-top: -24px;
+}
+
+.close:hover {
+    color: #009688;
+}
+
+.close:focus {
+    color: #009688;
+}
+
 .comment {
     font-size: 14px;
     margin-bottom: 2rem;
@@ -199,6 +214,41 @@
 .commenter {
     font-size: 18px;
     font-weight: 500;
+}
+
+.my-products-header {
+    display: flow-root;
+}
+
+.my-products-header .add-btn {
+    background: #009688;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 500;
+    height: 56px;
+    width: 56px;
+}
+
+.my-products-header .fl-right {
+    float: right;
+}
+
+.my-products-header .fl-right button {
+    background: transparent;
+    border: none;
+    color: #009688;
+    display: block;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.my-products-header .fl-right button:first-of-type {
+    margin-left: 152px;
 }
 
 .order-by {

@@ -1,13 +1,15 @@
-{% extends 'turgus/landing.base.twig' %}
+{% extends 'turgus/base.html.twig' %}
 
+{% block heading %}
+    <div class="my-products-header">
+        <button class="add-btn">+</button>
+        <div class="fl-right">
+            <button>statistika</button>
+            <button>pardavimo registravimas</button>
+        </div>
+    </div>
+{% endblock %}
 {% block body %}
-    <select class="order-by" onchange="location = this.value;">
-        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/0'}}">Rūšiuoti pagal</option>
-        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/mažiausia_kaina'}}">Mažiausią kainą</option>
-        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/didžiausia_kaina'}}">Didžiausią kainą</option>
-        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/naujausi'}}">Naujausius</option>
-        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/seniausi'}}">Seniausius</option>
-    </select>
     {% for product in products %}
         <div class="product">
             <img src="{{ asset('images/' ~ product.nuotrauka) }}">
@@ -49,4 +51,4 @@
             </div>
         {% endif %}
     {% endfor %}
-{% endblock %}
+{%  endblock %}
