@@ -86,13 +86,6 @@ class TurgausPreke
     private $ieskomosPrekesAprasymas;
 
     /**
-     * @var int|null
-     *
-     * @ORM\Column(name="fk_TURG_PREKES_KATEGORIJAid1", type="integer", nullable=true)
-     */
-    private $fkTurgPrekesKategorijaid1;
-
-    /**
      * @var \TurgPrekesKategorija
      *
      * @ORM\ManyToOne(targetEntity="TurgPrekesKategorija")
@@ -101,6 +94,13 @@ class TurgausPreke
      * })
      */
     private $fkTurgPrekesKategorija;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="ar_pasalinta", type="boolean", nullable=false, options={"default"="0"})
+     */
+    private $arPasalinta = '0';
 
     public function getId(): ?int
     {
@@ -215,18 +215,6 @@ class TurgausPreke
         return $this;
     }
 
-    public function getFkTurgPrekesKategorijaid1(): ?int
-    {
-        return $this->fkTurgPrekesKategorijaid1;
-    }
-
-    public function setFkTurgPrekesKategorijaid1(?int $fkTurgPrekesKategorijaid1): self
-    {
-        $this->fkTurgPrekesKategorijaid1 = $fkTurgPrekesKategorijaid1;
-
-        return $this;
-    }
-
     public function getFkTurgPrekesKategorija(): ?TurgPrekesKategorija
     {
         return $this->fkTurgPrekesKategorija;
@@ -239,5 +227,19 @@ class TurgausPreke
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isArPasalinta(): bool
+    {
+        return $this->arPasalinta;
+    }
 
+    /**
+     * @param bool $arPasalinta
+     */
+    public function setArPasalinta(bool $arPasalinta): void
+    {
+        $this->arPasalinta = $arPasalinta;
+    }
 }
