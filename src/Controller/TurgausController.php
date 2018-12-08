@@ -19,7 +19,7 @@ class TurgausController extends AbstractController
      */
     public function landing($type = 'Įprastas')
     {
-        $categoryArr = $this->getDOctrine()->getRepository(PardavimoTipas::class)->findBY(
+        $categoryArr = $this->getDoctrine()->getRepository(PardavimoTipas::class)->findBY(
             array(
                 'pavadinimas' => $type
             )
@@ -69,7 +69,7 @@ class TurgausController extends AbstractController
     /**
      * @Route("/turgus/prekes/{type}/{category}/{sort}/{productId}"), methods={"GET"})
      */
-    public function products($type = 'Įprastas', $category = '0', $sort = '0', $productId = '-1')
+    public function products($type = 'Įprastas', $category = '0', $sort, $productId = '-1')
     {
         $typeArr = $this->getDoctrine()->getRepository(PardavimoTipas::class)->findBy(
             array(
@@ -186,6 +186,66 @@ class TurgausController extends AbstractController
             'selected' => $type,
             'category' => $categoryArr[0],
             'products' => $products,
+            'productId' => $productId,
+            'seller' => $seller,
+            'comments' => $comments,
+            'commenters' => $commenters
+        ]);
+    }
+
+    /**
+     * @Route("/turgus-mano-prekes/{productId}"), methods={"GET"})
+     */
+    public function myProducts($productId = -1)
+    {
+        $errMsg = "";
+        $sellArr = array();
+        $productArr = array();
+        $user = $this->getUser();
+
+        if ($user == null) {
+            $errorMsg = "Neprisijungęs vartotojas";
+        } else {
+            $sellArr = $this->getDoctrine()->getRepository(TurgausPardavimas::class)->findBy(
+                array(
+                    'fkPardavejas' => $user->getId()
+                )
+            );
+        }
+
+        foreach ($sellArr as $sell) {
+            $product = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                array(
+                    'id' => $sell->getFkTurgausPreke()
+                )
+            );
+            array_push($productArr, $product[0]);
+        }
+
+        $seller = $this->getUser();
+
+        $comments = $this->getDoctrine()->getRepository(Komentaras::class)->findBy(
+            array (
+                'fkTurgausPreke' => $productId
+            )
+        );
+        $comments = array_values($comments);
+
+        $commenters = array();
+        foreach($comments as $comment) {
+            $commenter = $this->getDoctrine()->getRepository(Vartotojas::class)->findBy(
+                array (
+                    'id' => $comment->getFkVartotojas()
+                )
+            );
+            array_push($commenters, $commenter[0]);
+        }
+        $commenters = array_values($commenters);
+
+        return $this->render('turgus/myProducts.twig', [
+            'user' => $user,
+            'products' => $productArr,
+            'errMsg' => $errMsg,
             'productId' => $productId,
             'seller' => $seller,
             'comments' => $comments,
