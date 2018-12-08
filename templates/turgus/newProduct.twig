@@ -1,0 +1,49 @@
+{% extends 'turgus/base.html.twig' %}
+
+{% block heading %}
+    <div class="my-products-header">
+        <button class="add-btn">+</button>
+        <div class="fl-right">
+            <button>statistika</button>
+            <button>pardavimo registravimas</button>
+        </div>
+    </div>
+{% endblock %}
+{% block body %}
+    {% for product in products %}
+        <div class="product">
+            <img src="{{ asset('images/' ~ product.nuotrauka) }}">
+            <h5>{{ product.pavadinimas }}</h5>
+            <div class="product-price">
+                <span> {{ product.kaina }}€ </span>
+                {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+                <button onclick="{{'window.location.href = \'' ~ currentPath ~ '/' ~ product.id  ~ '\''}}">daugiau</button>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="overlay">
+    </div>
+    <div class="form-card">
+        <button class="close" onclick="window.history.back()"><span class="fas fa-window-close"></button>
+        <form>
+            <input type="text" placeholder="Prekės pavadinimas">
+            <input type="text" placeholder="Kaina">
+            <input type="text" placeholder="Kiekis">
+            <input type="text" placeholder="Aprašymas">
+            <select>
+                <option value="">Kategorija</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.pavadinimas }}</option>
+                {% endfor %}
+            </select>
+            <select>
+                <option value="">Pardavimo tipas</option>
+                {% for type in types %}
+                    <option value="{{ type.id }}">{{ type.pavadinimas }}</option>
+                {% endfor %}
+            </select>
+
+            <button class="card-button" type="submit">pridėti prekę</button>
+        </form>
+    </div>
+{%  endblock %}

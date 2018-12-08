@@ -252,4 +252,46 @@ class TurgausController extends AbstractController
             'commenters' => $commenters
         ]);
     }
+
+    /**
+     * @Route("/turgus-nauja-preke"), methods={"GET"})
+     */
+    public function newProduct()
+    {
+        $errMsg = "";
+        $sellArr = array();
+        $productArr = array();
+        $user = $this->getUser();
+
+        if ($user == null) {
+            $errorMsg = "Neprisijungęs vartotojas";
+        } else {
+            $sellArr = $this->getDoctrine()->getRepository(TurgausPardavimas::class)->findBy(
+                array(
+                    'fkPardavejas' => $user->getId()
+                )
+            );
+        }
+
+        foreach ($sellArr as $sell) {
+            $product = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                array(
+                    'id' => $sell->getFkTurgausPreke()
+                )
+            );
+            array_push($productArr, $product[0]);
+        }
+
+        $categories = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(array());
+        
+        $types = $this->getDoctrine()->getRepository(PardavimoTipas::class)->findBy(array());
+
+        return $this->render('turgus/newProduct.twig', [
+            'user' => $user,
+            'products' => $productArr,
+            'errMsg' => $errMsg,
+            'categories' => $categories,
+            'types' => $types
+        ]);
+    }
 }
