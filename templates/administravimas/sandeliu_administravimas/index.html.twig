@@ -39,21 +39,20 @@
                     var infoContentDiv = document.createElement('div');
                     infoContentDiv.className = "card";
 
-                    var header = document.createElement('div');
-                    header.className = "";
-                    header.innerText = sandelis.adresas;
+                    var forma = document.createElement('div');
+                    forma.innerHTML = '{{ form_start(formEdit, {"attr" : {"id": "forma", "class": "sandelisEdit","style": "margin: 0; padding: 0"}}) }}' +
+                            '{{ form_widget(formEdit) }}' +
+                            '<button type="button" style="margin: 0; float: right" onclick="saveData()" class="btn btn-sm btn-outline-primary btn-primary">Keisti</button>' +
+                            '{{ form_end(formEdit) }}';
 
-                    var contents = document.createElement('null');
-                    contents.innerHTML = '<form method="POST" style="margin: 0; padding: 0">' +
-                        '<button type="submit" style="margin: 0; float: right" name="remove" value="'+sandelis.id+'" class="btn btn-sm btn-outline-danger btn-danger">Šalinti</button>' +
-                        '</form>';
-
-                    infoContentDiv.appendChild(header);
-                    infoContentDiv.appendChild(document.createElement('br'));
-                    infoContentDiv.appendChild(contents);
+                    infoContentDiv.appendChild(forma);
                     marker.addListener('click', function(){
+                        currentMarker = marker;
                         infoWindow.setContent(infoContentDiv);
                         infoWindow.open(map, marker);
+                        var forma = infoContentDiv.children[0].children[0];
+                        forma.elements['sandelis[adresas]'].value = sandelis.adresas;
+                        forma.elements['sandelis[edit]'].value = sandelis.id;
                     });
                 });
             } else {
