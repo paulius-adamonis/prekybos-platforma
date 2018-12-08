@@ -1,4 +1,4 @@
-{% extends 'administravimas/parduotuve.html.twig' %}
+{% extends 'administravimas/vartotojai.html.twig' %}
 
 {% block body %}
     {% if successMessage %}
@@ -29,8 +29,8 @@
                     <td>{{ vartotojas.telNr }}</td>
                     <td>
                         <form method="post">
-                            <button class="btn btn-sm btn-light bg-primary" type="submit" name="darbininkas" value="{{ vartotojas.id }}">
-                                Pridėti
+                            <button class="btn btn-sm btn-light bg-danger" type="submit" name="vartotojas" value="{{ vartotojas.id }}">
+                                Išaktyvuoti
                             </button>
                         </form>
                     </td>
@@ -38,6 +38,6 @@
             {% endfor %}
         </table>
     {% else %}
-        Šiuo metu sistemoje nėra nei vieno paprasto vartotojo!
+        Šiuo metu sistemoje nėra nei vieno moderatoriaus!
     {% endif %}
 {% endblock %}
