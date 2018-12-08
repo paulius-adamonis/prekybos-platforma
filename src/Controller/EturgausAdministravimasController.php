@@ -14,7 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 /**
  * Class EturgausAdministravimasController
  * @package App\Controller
- * @IsGranted("ROLE_ADMIN")
+ * @IsGranted("ROLE_MOD")
  */
 class EturgausAdministravimasController extends AbstractController
 {
