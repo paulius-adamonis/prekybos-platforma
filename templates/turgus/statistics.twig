@@ -1,0 +1,120 @@
+{% extends 'turgus/base.html.twig' %}
+
+{% block body %}
+    <canvas id="moneyFlow" width="100" height="100"></canvas>
+    <canvas id="visits" width="100" height="100"></canvas>
+    <script>
+    var visits = document.getElementById('visits').getContext('2d');
+    Chart.defaults.global.defaultFontSize = 30;
+
+    var moneyFlow = document.getElementById("moneyFlow").getContext('2d');
+    var myChart = new Chart(moneyFlow, {
+        type: 'line',
+        data: {
+            labels: ["Sausis", "Vasaris", "Kovas", "Balandis", "Gegužė", "Birželis", "Liepa", "Rugpjūtis", "Rugsėjis", "Spalis", "Lapkritis", "Gruodis"],
+            datasets: [{
+                label: 'Likusių neparduotų prekių suma (€)',
+                data: [ {{ uploaded[0] }},
+                        {{ uploaded[1] }},
+                        {{ uploaded[2] }},
+                        {{ uploaded[3] }},
+                        {{ uploaded[4] }},
+                        {{ uploaded[5] }},
+                        {{ uploaded[6] }},
+                        {{ uploaded[7] }},
+                        {{ uploaded[8] }},
+                        {{ uploaded[9] }},
+                        {{ uploaded[10] }},
+                        {{ uploaded[11] }}],
+                backgroundColor: [
+                    'transparent'
+                ],
+                borderColor: [
+                    'blue'
+                ],
+                borderWidth: 7
+            },{
+                label: 'Parduotų prekių suma (€)',
+                data: [ {{ selled[0] }},
+                        {{ selled[1] }},
+                        {{ selled[2] }},
+                        {{ selled[3] }},
+                        {{ selled[4] }},
+                        {{ selled[5] }},
+                        {{ selled[6] }},
+                        {{ selled[7] }},
+                        {{ selled[8] }},
+                        {{ selled[9] }},
+                        {{ selled[10] }},
+                        {{ selled[11] }}],
+                backgroundColor: [
+                    'transparent'
+                ],
+                borderColor: [
+                    '#009688'
+                ],
+                borderWidth: 7
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+    new Chart(document.getElementById("visits"), {
+        type: 'pie',
+        data: {
+        labels: [
+                {% for product in products %}
+                    "{{ product.pavadinimas }}",
+                {% endfor %}
+                ],
+        datasets: [{
+            backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+            data: [
+                {% for visit in visits %}
+                    {{ visit }},
+                {% endfor %}
+            ]
+        }]
+        },
+        options: {
+        title: {
+            display: true,
+            text: 'Parduodamų prekių peržiūros.'
+        }
+        }
+    });
+
+
+    {# var visitChart = new Chart(visits, {
+        type: 'pie',
+        data: {
+            labels: [
+                {% for product in products %}
+                    "{{ product.pavadinimas }}",
+                {% endfor %}
+            ],
+            data: [
+                {% for visit in visits %}
+                    {{ visit }},
+                {% endfor %}
+            ]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    }); #}
+    </script>
+{% endblock %}

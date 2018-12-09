@@ -216,6 +216,19 @@
     font-weight: 500;
 }
 
+#moneyFlow {
+    width: 500px !important;
+    height: 500px !important;
+    display: inline-block !important;
+}
+
+#visits {
+    width: 400px !important;
+    height: 400px !important;
+    display: inline-block !important;
+    margin-left: 100px !important;
+}
+
 .my-products-header {
     display: flow-root;
 }
