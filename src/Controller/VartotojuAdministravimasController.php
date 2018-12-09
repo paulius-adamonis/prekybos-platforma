@@ -123,7 +123,7 @@ class VartotojuAdministravimasController extends AbstractController
         $nusiskundimai = $this->getDoctrine()->getRepository(Skundas::class)->findAll();
 
         return $this->render('administravimas/vartotoju_administravimas/nusiskundimai.html.twig', [
-            'title' => 'Išaktyvuoti vartotoją',
+            'title' => 'Nusiskundimų sąrašas',
             'skundai' => $nusiskundimai
         ]);
     }
