@@ -13,6 +13,7 @@ use App\Entity\TurgausPreke;
 use App\Entity\TurgausPardavimas;
 use App\Entity\Vartotojas;
 use App\Entity\Komentaras;
+use App\Entity\PrekiuNarsymoIstorija;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -207,6 +208,39 @@ class TurgausController extends AbstractController
             $seller = '';
         }
 
+        if ($productId != -1){
+            if ($seller != $this->getUser()) {
+                $entityManager = $this->getDoctrine()->getManager();
+        
+                $visits = $this->getDoctrine()->getRepository(PrekiuNarsymoIstorija::class)->findBy(
+                    array (
+                        'fkTurgausPreke' => $productId
+                    )
+                );
+                
+                if ($visits == null) {
+                    $product = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                        array (
+                            'id' => $productId
+                        )
+                    );
+                    $newVisit = new PrekiuNarsymoIstorija();
+                    $newVisit->setSkaitliukas(1);
+                    $newVisit->setFkVartotojas($this->getUser());
+                    $newVisit->setFkTurgausPreke($product[0]);
+                    $entityManager->persist($newVisit);
+                } else {
+                    $newVisit = $visits[0];
+                    $newVisit->setSkaitliukas(intval($newVisit->getSkaitliukas()) + 1);
+                    $entityManager->remove($visits[0]);
+                    $entityManager->flush();
+                    $entityManager->persist($newVisit);
+                }
+    
+                $entityManager->flush();
+            }
+        }        
+        
         return $this->render('turgus/products.twig', [
             'selected' => $type,
             'category' => $categoryArr[0],
@@ -585,6 +619,85 @@ class TurgausController extends AbstractController
             'products' => $productArr,
             'errMsg' => $errMsg,
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/turgus-statistika"), methods={"GET"})
+     */
+    public function statistics() {
+        $sells = $this->getDoctrine()->getRepository(TurgausPardavimas::class)->findBy(
+            array(
+                'fkPardavejas' => $this->getUser()
+            ),
+            array(
+                'data' => 'ASC'
+            )
+        );
+
+        $sellsFin = array();
+        foreach($sells as $sell) {
+            if ($sell->getFkTurgausPreke()->isArPasalinta() == 0) {
+                array_push($sellsFin, $sell);
+            }
+        }
+        $sells = $sellsFin;
+
+        $selled = array();
+        $uploaded = array();
+
+        for ($i = 0; $i < 12; $i++) {
+            $selled[$i] = 0;
+            $uploaded[$i] = 0;
+        }
+
+        $sellsFin = array();
+
+        foreach ($sells as $sell) {
+            $date = $sell->getData();
+            $d = date_parse_from_format("Y-m-d", $date->format('Y-m-d H:i:s'));
+            if ($sell->getFkPardavejas() == $sell->getFkPirkejas()) {
+                if ($sell->getFkTurgausPreke()->getFkTurgPrekesKategorija()->getFkPardavimoTipas()->getId() == 2) {
+                    for ($j = $d["month"] - 1; $j < 12; $j++) {
+                        $uploaded[$j] += intval($sell->getFkTurgausPreke()->getPradineKaina()) * intval($sell->getKiekis());
+                    }
+                } else {
+                    for ($j = $d["month"] - 1; $j < 12; $j++) {
+                        $uploaded[$j] += intval($sell->getFkTurgausPreke()->getKaina()) * intval($sell->getKiekis());
+                    }
+                }
+                array_push($sellsFin, $sell);
+            } else {
+                if ($sell->getFkTurgausPreke()->getFkTurgPrekesKategorija()->getFkPardavimoTipas()->getId() == 2) {
+                    $selled[$d["month"] - 1] += intval($sell->getFkTurgausPreke()->getPradineKaina()) * intval($sell->getKiekis());
+                } else {
+                    $selled[$d["month"] - 1] += intval($sell->getFkTurgausPreke()->getKaina()) * intval($sell->getKiekis());
+                }
+            }
+        }
+
+        $visitsCounts = array();
+        $products = array();
+
+        foreach ($sellsFin as $sell) {
+            $visits = $this->getDoctrine()->getRepository(PrekiuNarsymoIstorija::class)->findBy(
+                array (
+                    'fkTurgausPreke' => $sell->getFkTurgausPreke()
+                )
+            );
+            $visitCount = 0;
+            foreach ($visits as $visit) {
+                $visitCount += intval($visit->getSkaitliukas());
+            }
+            array_push($visitsCounts, $visitCount);
+            array_push($products, $sell->getFkTurgausPreke());
+        }
+
+        return $this->render('turgus/statistics.twig', [
+            'selled' => $selled,
+            'uploaded' => $uploaded,
+            'products' => $products,
+            'visits' => $visitsCounts
         ]);
     }
 }
