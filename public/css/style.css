@@ -297,6 +297,10 @@
     cursor: pointer;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .price-comments {
     margin-top: 24px; 
     width: 332px;
