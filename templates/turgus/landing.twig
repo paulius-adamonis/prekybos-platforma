@@ -5,7 +5,7 @@
     {% set i = 0 %}
     {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
     {% for category in categories %} 
-        <li class="category" onclick="{{ 'location = \'prekes/' ~ selected ~ '/' ~ category.pavadinimas  ~ '/0\'' }}">{{ category.pavadinimas }} <span class="fas fa-chevron-circle-right right category-enter"></span> <span class="fas fa-fire right category-icon"></span><span class="right category-param">{{ hot_counts[i] }}</span> <span class="fas fa-box-open right category-icon"></span> <span class="right category-param">{{ counts[i] }}</span></li>
+        <li class="category" onclick="{{ 'location = \'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas  ~ '/0\'' }}">{{ category.pavadinimas }} <span class="fas fa-chevron-circle-right right category-enter"></span> <span class="fas fa-fire right category-icon"></span><span class="right category-param">{{ hot_counts[i] }}</span> <span class="fas fa-box-open right category-icon"></span> <span class="right category-param">{{ counts[i] }}</span></li>
     {% set i = i + 1 %}
     {% endfor %}
 </ul>
