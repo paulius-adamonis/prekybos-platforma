@@ -109,147 +109,155 @@ class TurgausController extends AbstractController
 
         $products = array();
 
-        foreach($sells as $sell) {
-            if ($sell->getFkPardavejas() == $sell->getFkPirkejas() && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija() == $categoryArr[0] && $sell->getFkTurgausPreke()->isArPasalinta() == 0) {
-                array_push($products, $sell->getFkTurgausPreke());
-            }
-        }
-
-        switch($sort) {
-        case '0':
-            break;
-        case 'mažiausia_kaina':
-            for ($i = 0; $i < sizeof($products) - 1; $i++) {
-                for ($j = $i; $j < sizeof($products) - 1; $j++) {
-                    if($products[$j]->getKaina() > $products[$j+1]->getKaina()) {
-                        $tmp = $products[$j];
-                        $products[$j] = $products[$j+1];
-                        $products[$j+1] = $tmp;
-                    }
+        if($categoryArr != null)
+        {
+            foreach($sells as $sell) {
+                if ($sell->getFkPardavejas() == $sell->getFkPirkejas() && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija() == $categoryArr[0] && $sell->getFkTurgausPreke()->isArPasalinta() == 0) {
+                    array_push($products, $sell->getFkTurgausPreke());
                 }
             }
-            break;
-        case 'didžiausia_kaina':
-            for ($i = 0; $i < sizeof($products) - 1; $i++) {
-                for ($j = $i; $j < sizeof($products) - 1; $j++) {
-                    if($products[$j]->getKaina() < $products[$j+1]->getKaina()) {
-                        $tmp = $products[$j];
-                        $products[$j] = $products[$j+1];
-                        $products[$j+1] = $tmp;
+
+            switch($sort) {
+            case '0':
+                break;
+            case 'mažiausia_kaina':
+                for ($i = 0; $i < sizeof($products) - 1; $i++) {
+                    for ($j = $i; $j < sizeof($products) - 1; $j++) {
+                        if($products[$j]->getKaina() > $products[$j+1]->getKaina()) {
+                            $tmp = $products[$j];
+                            $products[$j] = $products[$j+1];
+                            $products[$j+1] = $tmp;
+                        }
                     }
                 }
-            }
-            break;
-        case 'naujausi':
-            for ($i = 0; $i < sizeof($products) - 1; $i++) {
-                for ($j = $i; $j < sizeof($products) - 1; $j++) {
-                    if($products[$j]->getData()->getTimestamp() > $products[$j+1]->getData()->getTimestamp()) {
-                        $tmp = $products[$j];
-                        $products[$j] = $products[$j+1];
-                        $products[$j+1] = $tmp;
+                break;
+            case 'didžiausia_kaina':
+                for ($i = 0; $i < sizeof($products) - 1; $i++) {
+                    for ($j = $i; $j < sizeof($products) - 1; $j++) {
+                        if($products[$j]->getKaina() < $products[$j+1]->getKaina()) {
+                            $tmp = $products[$j];
+                            $products[$j] = $products[$j+1];
+                            $products[$j+1] = $tmp;
+                        }
                     }
                 }
-            }
-            break;
-        case 'seniausi':
-            for ($i = 0; $i < sizeof($products) - 1; $i++) {
-                for ($j = $i; $j < sizeof($products) - 1; $j++) {
-                    if($products[$j]->getData()->getTimestamp() < $products[$j+1]->getData()->getTimestamp()) {
-                        $tmp = $products[$j];
-                        $products[$j] = $products[$j+1];
-                        $products[$j+1] = $tmp;
+                break;
+            case 'naujausi':
+                for ($i = 0; $i < sizeof($products) - 1; $i++) {
+                    for ($j = $i; $j < sizeof($products) - 1; $j++) {
+                        if($products[$j]->getData()->getTimestamp() > $products[$j+1]->getData()->getTimestamp()) {
+                            $tmp = $products[$j];
+                            $products[$j] = $products[$j+1];
+                            $products[$j+1] = $tmp;
+                        }
                     }
                 }
+                break;
+            case 'seniausi':
+                for ($i = 0; $i < sizeof($products) - 1; $i++) {
+                    for ($j = $i; $j < sizeof($products) - 1; $j++) {
+                        if($products[$j]->getData()->getTimestamp() < $products[$j+1]->getData()->getTimestamp()) {
+                            $tmp = $products[$j];
+                            $products[$j] = $products[$j+1];
+                            $products[$j+1] = $tmp;
+                        }
+                    }
+                }
+                break;
             }
-            break;
-        }
 
-        $selling = array();
-        foreach ($products as $product) {
-            if ($product->getId() == $productId){
-                $selling = $this->getDoctrine()->getRepository(TurgausPardavimas::class)->findBy(
-                    array(
-                        'fkTurgausPreke' => $productId
-                    )
-                );
-            }
-        }
-
-        $seller = array();
-        if (sizeof($selling) > 0) {
-            $seller = $this->getDoctrine()->getRepository(Vartotojas::class)->findBy(
-                array(
-                    'id' => $selling[0]->getFkPardavejas()
-                )
-            );
-        }
-
-        $comments = $this->getDoctrine()->getRepository(Komentaras::class)->findBy(
-            array (
-                'fkTurgausPreke' => $productId
-            )
-        );
-        $comments = array_values($comments);
-
-        $commenters = array();
-        foreach($comments as $comment) {
-            $commenter = $this->getDoctrine()->getRepository(Vartotojas::class)->findBy(
-                array (
-                    'id' => $comment->getFkVartotojas()
-                )
-            );
-            array_push($commenters, $commenter[0]);
-        }
-        $commenters = array_values($commenters);
-
-        if (sizeof($seller) > 0) {
-            $seller = $seller[0];
-        } else {
-            $seller = '';
-        }
-
-        if ($productId != -1){
-            if ($seller != $this->getUser()) {
-                $entityManager = $this->getDoctrine()->getManager();
-        
-                $visits = $this->getDoctrine()->getRepository(PrekiuNarsymoIstorija::class)->findBy(
-                    array (
-                        'fkTurgausPreke' => $productId
-                    )
-                );
-                
-                if ($visits == null) {
-                    $product = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
-                        array (
-                            'id' => $productId
+            $selling = array();
+            foreach ($products as $product) {
+                if ($product->getId() == $productId){
+                    $selling = $this->getDoctrine()->getRepository(TurgausPardavimas::class)->findBy(
+                        array(
+                            'fkTurgausPreke' => $productId
                         )
                     );
-                    $newVisit = new PrekiuNarsymoIstorija();
-                    $newVisit->setSkaitliukas(1);
-                    $newVisit->setFkVartotojas($this->getUser());
-                    $newVisit->setFkTurgausPreke($product[0]);
-                    $entityManager->persist($newVisit);
-                } else {
-                    $newVisit = $visits[0];
-                    $newVisit->setSkaitliukas(intval($newVisit->getSkaitliukas()) + 1);
-                    $entityManager->remove($visits[0]);
-                    $entityManager->flush();
-                    $entityManager->persist($newVisit);
                 }
-    
-                $entityManager->flush();
             }
-        }        
+
+            $seller = array();
+            if (sizeof($selling) > 0) {
+                $seller = $this->getDoctrine()->getRepository(Vartotojas::class)->findBy(
+                    array(
+                        'id' => $selling[0]->getFkPardavejas()
+                    )
+                );
+            }
+
+            $comments = $this->getDoctrine()->getRepository(Komentaras::class)->findBy(
+                array (
+                    'fkTurgausPreke' => $productId
+                )
+            );
+            $comments = array_values($comments);
+
+            $commenters = array();
+            foreach($comments as $comment) {
+                $commenter = $this->getDoctrine()->getRepository(Vartotojas::class)->findBy(
+                    array (
+                        'id' => $comment->getFkVartotojas()
+                    )
+                );
+                array_push($commenters, $commenter[0]);
+            }
+            $commenters = array_values($commenters);
+
+            if (sizeof($seller) > 0) {
+                $seller = $seller[0];
+            } else {
+                $seller = '';
+            }
+
+            if ($productId != -1){
+                if ($seller != $this->getUser()) {
+                    $entityManager = $this->getDoctrine()->getManager();
+            
+                    $visits = $this->getDoctrine()->getRepository(PrekiuNarsymoIstorija::class)->findBy(
+                        array (
+                            'fkTurgausPreke' => $productId
+                        )
+                    );
+                    
+                    if ($visits == null) {
+                        $product = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                            array (
+                                'id' => $productId
+                            )
+                        );
+                        $newVisit = new PrekiuNarsymoIstorija();
+                        $newVisit->setSkaitliukas(1);
+                        $newVisit->setFkVartotojas($this->getUser());
+                        $newVisit->setFkTurgausPreke($product[0]);
+                        $entityManager->persist($newVisit);
+                    } else {
+                        $newVisit = $visits[0];
+                        $newVisit->setSkaitliukas(intval($newVisit->getSkaitliukas()) + 1);
+                        $entityManager->remove($visits[0]);
+                        $entityManager->flush();
+                        $entityManager->persist($newVisit);
+                    }
         
-        return $this->render('turgus/products.twig', [
-            'selected' => $type,
-            'category' => $categoryArr[0],
-            'products' => $products,
-            'productId' => $productId,
-            'seller' => $seller,
-            'comments' => $comments,
-            'commenters' => $commenters
-        ]);
+                    $entityManager->flush();
+                }
+            }        
+            
+            return $this->render('turgus/products.twig', [
+                'selected' => $type,
+                'category' => $categoryArr[0],
+                'products' => $products,
+                'productId' => $productId,
+                'seller' => $seller,
+                'comments' => $comments,
+                'commenters' => $commenters
+            ]);
+        } else {
+            return $this->render('turgus/requestSuccess.twig', [
+                'msg' => '404, ar norite grįžti?',
+                'link' => '/'
+            ]);
+        }
     }
 
     /**
@@ -626,6 +634,13 @@ class TurgausController extends AbstractController
      * @Route("/turgus-statistika"), methods={"GET"})
      */
     public function statistics() {
+        if ($this->getUser() == null) {
+            return $this->render('turgus/requestSuccess.twig', [
+                'msg' => 'Prašome prisijungti.',
+                'link' => '/login'
+            ]);
+        }
+
         $sells = $this->getDoctrine()->getRepository(TurgausPardavimas::class)->findBy(
             array(
                 'fkPardavejas' => $this->getUser()
@@ -637,7 +652,7 @@ class TurgausController extends AbstractController
 
         $sellsFin = array();
         foreach($sells as $sell) {
-            if ($sell->getFkTurgausPreke()->isArPasalinta() == 0) {
+            if ($sell->getFkTurgausPreke()->isArPasalinta() == 0 && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija()->isArPasalinta() == 0) {
                 array_push($sellsFin, $sell);
             }
         }
@@ -699,5 +714,145 @@ class TurgausController extends AbstractController
             'products' => $products,
             'visits' => $visitsCounts
         ]);
+    }
+    
+    /**
+     * @Route("/turgus/prekes/{type}/{category}/{sort}/{productId}/komentaras"), methods={"GET", "POST"})
+     */
+    public function comment($type = 'Įprastas', $category = '0', $sort, $productId = '-1', Request $request)
+    {
+        if ($this->getUser() == null) {
+            return $this->render('turgus/requestSuccess.twig', [
+                'msg' => 'Prašome prisijungti.',
+                'link' => '/login'
+            ]);
+        }
+
+        $typeArr = $this->getDoctrine()->getRepository(PardavimoTipas::class)->findBy(
+            array(
+                'pavadinimas' => $type
+            )
+        );
+
+        $typeArr = array_values($typeArr);
+
+        $categoryArr = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(
+            array(
+                'fkPardavimoTipas' => $typeArr[0]->getId(),
+                'pavadinimas' => $category,
+                'arPasalinta' => 0
+            )
+        );
+
+        $sells = $this->getDoctrine()->getRepository(TurgausPardavimas::class)->findBy(array());
+
+        $products = array();
+
+        if($categoryArr != null)
+        {
+            foreach($sells as $sell) {
+                if ($sell->getFkPardavejas() == $sell->getFkPirkejas() && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija() == $categoryArr[0] && $sell->getFkTurgausPreke()->isArPasalinta() == 0) {
+                    array_push($products, $sell->getFkTurgausPreke());
+                }
+            }
+
+            switch($sort) {
+            case '0':
+                break;
+            case 'mažiausia_kaina':
+                for ($i = 0; $i < sizeof($products) - 1; $i++) {
+                    for ($j = $i; $j < sizeof($products) - 1; $j++) {
+                        if($products[$j]->getKaina() > $products[$j+1]->getKaina()) {
+                            $tmp = $products[$j];
+                            $products[$j] = $products[$j+1];
+                            $products[$j+1] = $tmp;
+                        }
+                    }
+                }
+                break;
+            case 'didžiausia_kaina':
+                for ($i = 0; $i < sizeof($products) - 1; $i++) {
+                    for ($j = $i; $j < sizeof($products) - 1; $j++) {
+                        if($products[$j]->getKaina() < $products[$j+1]->getKaina()) {
+                            $tmp = $products[$j];
+                            $products[$j] = $products[$j+1];
+                            $products[$j+1] = $tmp;
+                        }
+                    }
+                }
+                break;
+            case 'naujausi':
+                for ($i = 0; $i < sizeof($products) - 1; $i++) {
+                    for ($j = $i; $j < sizeof($products) - 1; $j++) {
+                        if($products[$j]->getData()->getTimestamp() > $products[$j+1]->getData()->getTimestamp()) {
+                            $tmp = $products[$j];
+                            $products[$j] = $products[$j+1];
+                            $products[$j+1] = $tmp;
+                        }
+                    }
+                }
+                break;
+            case 'seniausi':
+                for ($i = 0; $i < sizeof($products) - 1; $i++) {
+                    for ($j = $i; $j < sizeof($products) - 1; $j++) {
+                        if($products[$j]->getData()->getTimestamp() < $products[$j+1]->getData()->getTimestamp()) {
+                            $tmp = $products[$j];
+                            $products[$j] = $products[$j+1];
+                            $products[$j+1] = $tmp;
+                        }
+                    }
+                }
+                break;
+            }
+
+            $form = $this->createFormBuilder(array())
+            ->add('komentaras', TextType::class)
+            ->add('save', SubmitType::class, array('label' => 'Komentuoti'))
+            ->getForm();
+
+            $form->handleRequest($request);
+            
+            if ($form->isSubmitted() && $form->isValid()) {
+                $newComment = new Komentaras();
+                $text = $form['komentaras']->getData();
+                $date = new \DateTime();
+                $commenter = $this->getUser();
+                $productsArr = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                    array(
+                        'id' => $productId,
+                        'arPasalinta' => 0
+                    )
+                );
+                $product = $products[0];
+                
+                $newComment->setTekstas($text);
+                $newComment->setData($date);
+                $newComment->setFkVartotojas($commenter);
+                $newComment->setFkTurgausPreke($product);
+
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($newComment);
+                $entityManager->flush();
+
+                return $this->render('turgus/requestSuccess.twig', [
+                    'msg' => 'Komentaras pridėtas sėkmingai.',
+                    'link' => '/turgus/prekes/'.$type.'/'.$category.'/'.$sort
+                ]);
+            }
+
+            return $this->render('turgus/comment.twig', [
+                'selected' => $type,
+                'category' => $categoryArr[0],
+                'products' => $products,
+                'productId' => $productId,
+                'form' => $form->createView()
+            ]);
+        }
+        else {
+            return $this->render('turgus/requestSuccess.twig', [
+                'msg' => '404, ar norite grįžti?',
+                'link' => '/'
+            ]);
+        }
     }
 }

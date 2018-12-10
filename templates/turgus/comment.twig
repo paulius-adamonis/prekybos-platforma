@@ -1,0 +1,30 @@
+{% extends 'turgus/landing.base.twig' %}
+
+{% block body %}
+    <select class="order-by" onchange="location = this.value;">
+        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/0'}}">Rūšiuoti pagal</option>
+        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/mažiausia_kaina'}}">Mažiausią kainą</option>
+        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/didžiausia_kaina'}}">Didžiausią kainą</option>
+        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/naujausi'}}">Naujausius</option>
+        <option value="{{'/turgus/prekes/' ~ selected ~ '/' ~ category.pavadinimas ~ '/seniausi'}}">Seniausius</option>
+    </select>
+    {% for product in products %}
+        <div class="product">
+            <img src="{{ asset('images/' ~ product.nuotrauka) }}">
+            <h5>{{ product.pavadinimas }}</h5>
+            <div class="product-price">
+                <span> {{ product.kaina }}€ </span>
+                {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+                <button onclick="{{'window.location.href = \'' ~ currentPath ~ '/' ~ product.id  ~ '\''}}">daugiau</button>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="overlay" onclick="window.history.back()">
+    </div>
+    <div class="form-card">
+        <button class="close" onclick="window.history.back()"><span class="fas fa-window-close"></button>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

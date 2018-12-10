@@ -37,7 +37,8 @@
                 </div>
                 <div class="price-comments">
                     <span class="card-price">{{ product.kaina }}€</span>
-                    <button class="card-button">komentuoti</button>
+                    {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+                    <button class="card-button" onclick="{{ 'location = \'' ~ currentPath ~ '/komentaras\'' }}">komentuoti</button>
                     <h5 class="comment-heading">Komentarai</h5>
                     {% set i = 0 %}
                     {% for comment in comments %}

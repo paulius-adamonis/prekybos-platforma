@@ -275,6 +275,10 @@
     text-transform: uppercase;
 }
 
+.selected-nav {
+    color: #fff !important;
+}
+
 .seller-email {
     font-size: 14px;
     font-weight: 500;
