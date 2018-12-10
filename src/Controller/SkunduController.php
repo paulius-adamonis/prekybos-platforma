@@ -8,6 +8,7 @@ use App\Entity\SkundoTipas;
 use App\Entity\Vartotojas;
 use App\Form\SkundasType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -49,6 +50,11 @@ class SkunduController extends AbstractController
             $entityManager->persist($newComplaint);
             $entityManager->flush();
 
+            return $this->render('skundu/index.html.twig', [
+                'title' => 'Nusiskundimai',
+                'message' => 'Skundas parašytas sėkmingai!'
+            ]);
+
         }
         return $this->render('skundu/naujas.html.twig', [
             'title' => 'Nusiskundimu',
@@ -69,5 +75,23 @@ class SkunduController extends AbstractController
             'title' => 'Nusiskundimų sąrašas',
             'complaints' => $complaints
         ]);
+    }
+
+    /**
+     * @Route("/skundai/sarasas/{id}", name="skundai_sarasas_placiau")
+     * @ParamConverter("complaint", class="App\Entity\Skundas", options={"id" = "id"})
+     * @Method({"GET", "POST"})
+     */
+    public function showMoreAction(Skundas $complaint = null)
+    {
+        $user = $this->getUser();
+        if ($complaint !== null && $complaint->getFkPareiskejas() === $user){
+            return $this->render('skundu/placiau.html.twig', [
+                'title' => 'Peržiūrėti nusiskundimą',
+                'skundas' => $complaint
+            ]);
+        }
+        return $this->redirectToRoute('app_main');
+
     }
 }

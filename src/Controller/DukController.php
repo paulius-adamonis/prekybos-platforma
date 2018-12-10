@@ -32,6 +32,7 @@ class DukController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($newQuestion);
             $entityManager->flush();
+            $this->addFlash("successful", "Klausimas sėkmingai nusiųstas administratoriams!");
             return $this->redirectToRoute('DUK');
 
         }

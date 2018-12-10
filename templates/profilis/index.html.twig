@@ -4,6 +4,7 @@
 
 
 {% block content %}
+
     <div class="card">
         <div class="card-body">
 
@@ -14,6 +15,12 @@
                         <h6>ID: {{ user.id }}</h6>
                         {{ averageRating|round|rating(5, "fa-norm") }}
                         <h6>Reitingas: {{ averageRating|round(2,'ceil') }}</h6>
+                        {% if user.id != app.user.id %}
+                        <li style="display: unset;">
+                            <a id="btn-getInTouch" href="#">Parašyti vartotojui</a>
+                        </li>
+                        <a id="btn-getInTouch2" href="#" class="__talkjs_launcher closed"></a>
+                        {% endif %}
 
                     </div>
                     <div class="rightcolumn col-sm">
@@ -24,8 +31,8 @@
                             <div class="ratingCard">
                                 <h5>{{ rating.fkRasytojas.vardas }} {{ rating.fkRasytojas.pavarde }}</h5>
                                 <div class="row">
-                                    <span class="col-sm-9">{{ rating.aprasymas }}</span>
-                                    <span class="col-sm-3" style="text-align: right;">{{ rating.reitingas|rating }}</span>
+                                    <span class="col-sm-8">{{ rating.aprasymas }}</span>
+                                    <span class="col-sm-4" style="text-align: right;">{{ rating.reitingas|rating }}</span>
                                 </div>
                             </div>
                                 <hr style="margin: 0;">
@@ -40,8 +47,8 @@
                             {{ form_start(form) }}
                             {{ form_errors(form) }}
                             <div class="row">
-                                <span class="col-sm-9">{{ form_row(form.aprasymas) }}</span>
-                                <span class="col-sm-3" style="text-align: center; margin-top: 15px;">{{ form_row(form.reitingas) }}</span>
+                                <span class="col-sm-8">{{ form_row(form.aprasymas) }}</span>
+                                <span class="col-sm-4" style="text-align: center; margin-top: 15px;">{{ form_row(form.reitingas) }}</span>
                             </div>
 
 
@@ -55,6 +62,7 @@
                     </div>
                 </div>
             </div>
+
             <script>
                 $(document).ready(function(){
                     $("#showRatings").click(function(){
@@ -72,7 +80,50 @@
                     });
                 });
             </script>
-
         </div>
     </div>
+
+
+
+    <!-- TalkJS initialization code, which we'll customize in the next steps -->
+    {% if user.id != app.user.id %}
+    <script>
+        Talk.ready.then(function() {
+            var me = new Talk.User({
+                id: "{{ app.user.id }}",
+                name: "{{ app.user.vardas }}",
+                email: "{{ app.user.elPastas }}",
+                photoUrl: "https://demo.talkjs.com/img/sebastian.jpg"
+            });
+            var other = new Talk.User({
+                id: "{{ user.id }}",
+                name: "{{ user.vardas }}",
+                email: "{{ user.elpastas }}",
+                photoUrl: "https://demo.talkjs.com/img/alice.jpg"
+            });
+            window.talkSession = new Talk.Session({
+                appId: "tGgMOqPj",
+                me: me
+            });
+
+            var conversation = talkSession.getOrCreateConversation(Talk.oneOnOneId(me, other));
+            conversation.setParticipant(me);
+            conversation.setParticipant(other);
+
+            var popup = talkSession.createPopup(conversation, { keepOpen: false });
+            popup.mount({ show: false });
+
+            var button = document.getElementById("btn-getInTouch");
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                popup.show();
+            });
+            var button2 = document.getElementById("btn-getInTouch2");
+            button2.addEventListener("click", function(event) {
+                event.preventDefault();
+                popup.show();
+            });
+        });
+    </script>
+    {% endif %}
 {% endblock %}

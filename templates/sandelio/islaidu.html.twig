@@ -1,0 +1,24 @@
+{% extends 'baseSandelis.html.twig' %}
+
+{% block body %}
+    <h1>{{ sandelis.adresas }}</h1>
+    <a class="btn btn-primary btn-outline-primary" href="{{ path('sandelis') }}/{{ sandelioId }}/islaida/new">Pridėti išlaidą</a>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Data</th>
+            <th>Tipas</th>
+            <th>Kaina</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for islaida in islaidos %}
+            <tr>
+                <td>{{ islaida.data|date("Y-m-d") }}</td>
+                <td>{{ islaida.fkIslaidosTipas.pavadinimas }}</td>
+                <td>{{ islaida.kaina }}€</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

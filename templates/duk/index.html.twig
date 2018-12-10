@@ -4,6 +4,9 @@
 
 {% block body %}
 <div class="card-text" style="position: relative;">
+    {% for message in app.flashes('successful') %}
+        <div class="alert alert-success" role="alert">{{ message }}</div>
+    {% endfor %}
     <div id="accordion">
         <div class="card duk">
             <div class="duk-header" id="headingOne">

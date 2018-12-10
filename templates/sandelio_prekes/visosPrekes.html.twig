@@ -1,0 +1,22 @@
+{% extends 'baseSandelis.html.twig' %}
+{% block body %}
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Pavadinimas</th>
+            <th>Ikėlimo data</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for preke in prekes %}
+            <tr>
+                <td>{{ preke.id }}</td>
+                <td>{{ preke.pavadinimas }}</td>
+                <td>{{ preke.ikelimoData|date("Y-m-d") }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <button class="btn btn-primary btn-outline-primary" onclick="history.go(-1);">Grizti</button>
+{% endblock %}
