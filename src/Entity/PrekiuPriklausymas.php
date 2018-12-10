@@ -76,6 +76,11 @@ class PrekiuPriklausymas
         return $this;
     }
 
+    public function addKiekis(int $kiekis){
+        $this->kiekis += $kiekis;
+        return $this;
+    }
+
     public function getFkParduotuvesPreke(): ?ParduotuvesPreke
     {
         return $this->fkParduotuvesPreke;

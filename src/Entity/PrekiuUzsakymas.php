@@ -32,6 +32,20 @@ class PrekiuUzsakymas
     private $kiekis;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="ar_uzsakyta", type="boolean", nullable=false, options={"default"="0"})
+     */
+    private $arUzsakyta = '0';
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="ar_pristatyta", type="boolean", nullable=false, options={"default"="0"})
+     */
+    private $arPristatyta = '0';
+
+    /**
      * @var \Sandelis
      *
      * @ORM\ManyToOne(targetEntity="Sandelis")
