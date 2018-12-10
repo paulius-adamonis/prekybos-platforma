@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+                {% block sidenav %}
+                    <a class="list-group-item" href="{{ path('sandeliuprekes') }}">Parduotuvės prėkės</a>
+                    {% if not is_granted("ROLE_ADMIN") %}
+                    <a class="list-group-item" href="{{ path('sandelis') }}">Sandelis</a>
+                    {% endif %}
+                    {% if is_granted("ROLE_ADMIN") %}
+                    <a class="list-group-item" href="{{ path('sandelis') }}">Sandeliai</a>
+                    {% endif %}
+                    <a class="list-group-item" href="#">Link 3</a>
+                {% endblock %}

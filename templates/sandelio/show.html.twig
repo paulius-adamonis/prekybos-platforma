@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'baseSandelis.html.twig' %}
 {% block body %}
     <h1>{{ sandelis.adresas }}</h1>
     <a class="btn btn-primary btn-outline-primary" href="{{ path('sandelis') }}/{{ sandelioId }}/prekenew">Pridėti prekę</a>
@@ -8,16 +8,22 @@
             <th>ID</th>
             <th>Pavadinimas</th>
             <th>Ikėlimo data</th>
+            <th>Kiekis</th>
             <th>Veiksmai</th>
         </tr>
         </thead>
         <tbody>
         {% for preke in prekes %}
             <tr>
-                <td>{{ preke.id }}</td>
-                <td>{{ preke.pavadinimas }}</td>
-                <td>{{ preke.ikelimoData|date("Y-m-d") }}</td>
-                <td><a class="btn btn-primary btn-outline-primary" href="{{ path('sandelis') }}/{{ sandelioId }}/preke/{{ preke.id }}">Parodyti</a>
+                <td>{{ preke.fkParduotuvesPreke.id }}</td>
+                <td>{{ preke.fkParduotuvesPreke.pavadinimas }}</td>
+                <td>{{ preke.fkParduotuvesPreke.ikelimoData|date("Y-m-d") }}</td>
+                <td>{{ preke.kiekis }}</td>
+                <td><a class="btn btn-primary btn-outline-primary" href="{{ sandelioId }}/plusminus/{{ preke.id }}/1">+1</a>
+                    <a class="btn btn-primary btn-outline-primary" href="{{ sandelioId }}/plusminus/{{ preke.id }}/-1">-1</a>
+                    <a class="btn btn-primary btn-outline-primary" href="{{ sandelioId }}/plusminus/{{ preke.id }}/5">+5</a>
+                    <a class="btn btn-primary btn-outline-primary" href="{{ sandelioId }}/plusminus/{{ preke.id }}/-5">-5</a>
+                    <a class="btn btn-primary btn-outline-primary" href="{{ sandelioId }}/{{ preke.id }}">Parodyti</a>
                     {% if is_granted("ROLE_ADMIN") %}
                     <a class="btn btn-primary btn-outline-primary" href="{{ path('sandelis') }}/{{ sandelioId }}/preke/edit/{{ preke.id }}">Tvarkyti</a>
                     <a class="btn btn-primary btn-outline-primary" style="color: red" href="{{ path('sandelis') }}/{{ sandelioId }}/preke/remove/{{ preke.id }}">Naikinti</a>
