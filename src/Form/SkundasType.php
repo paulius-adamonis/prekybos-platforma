@@ -43,7 +43,7 @@ class SkundasType extends AbstractType
             ->add('fkGavejas', TextType::class, array(
                 'label' => false,
                 'attr' => array(
-                    'placeholder' => 'Skundžiamo gaidžio ID',
+                    'placeholder' => 'Skundžiamo vartotojo ID',
                     'class' => 'form-control'
                 )
             ))

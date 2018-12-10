@@ -5,30 +5,29 @@
 {% block body %}
     <div class="card-text" style="position: relative;">
         {% if complaints %}
-            <table style="width: 100%;">
-                <thead>
+            <table class="table table-striped">
                 <tr>
                     <th style="width: 25%">Skundžiamas narys:</th>
                     <th style="width: 10%">Būsena</th>
-                    <th style="width: 40%">Skundas</th>
-                    <th>Options</th>
+                    <th style="width: 50%">Skundas</th>
+                    <th></th>
                 </tr>
-                </thead>
-                <tbody>
                 {% for complaint in complaints %}
                     <tr>
                         <td>{{ complaint.fkGavejas.vardas }} {{ complaint.fkGavejas.pavarde }}</td>
                         <td>{{ complaint.fkBusena.pavadinimas }}</td>
                         <td>
-                            {{ complaint.skundas }}
+                            {{ complaint.skundas|length > 60 ? complaint.skundas|slice(0, 61)|split(' ')|slice(0, -1)|join(' ') ~ '…' : complaint.skundas  }}
                         </td>
-                        <td><a>Buttonas</a></td>
+                        <td>
+                            <a class="btn btn-sm btn-light bg-primary" href="{{ path("skundai_sarasas_placiau", {'id' : complaint.id}) }}">Plačiau</a>
+                        </td>
                     </tr>
                 {% endfor %}
-                </tbody>
             </table>
         {% else %}
             <p>Nėra parašytų skundų!</p>
         {% endif %}
+        <button class="btn btn-primary btn-outline-primary" onclick="history.go(-1);">Grįžti</button>
     </div>
 {% endblock %}

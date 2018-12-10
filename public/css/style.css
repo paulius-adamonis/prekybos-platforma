@@ -435,3 +435,8 @@
 .right {
     float: right;
 }
+
+.mailIcon{
+    width: 30px;
+    height: 30px;
+}

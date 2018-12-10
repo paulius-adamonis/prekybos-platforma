@@ -1,0 +1,13 @@
+{% block subject %}Pranešimas apie gautą naują atsiliepimą{% endblock %}
+
+{% block body_text %}
+    {% autoescape false %}
+        <h3>Sveiki {{ vartotojas.vardas }} !</h3>
+        <br>
+        <h2>Norime pranešti, jog jums buvo paliktas naujas atsiliepimas! Jį galite pažiūrėti savo profilyje <a href="http://localhost:8000/vartotojas/id={{ vartotojas.id }}">paspaudę šią nuorodą</a>!</h2>
+        <br>
+        <br>
+        Su pagarba,<br>
+        PAM^3 komanda
+    {% endautoescape %}
+{% endblock %}
