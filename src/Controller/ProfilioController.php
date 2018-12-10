@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AtsiliepimuController extends AbstractController
+class ProfilioController extends AbstractController
 {
 
     /**
@@ -42,7 +42,7 @@ class AtsiliepimuController extends AbstractController
         ));
 
 
-        return $this->render('atsiliepimu/index.html.twig', [
+        return $this->render('profilis/index.html.twig', [
             'title' => 'Atsiliepimai',
             'user' => $loggedUser,
             'averageRating' => $averageRating,
@@ -57,7 +57,7 @@ class AtsiliepimuController extends AbstractController
      * @ParamConverter("user", class="App\Entity\Vartotojas", options={"id" = "id"})
      * @Method({"GET", "POST"})
      */
-    public function getUserProfile(Request $request, Vartotojas $user = null, PaginatorInterface $paginator)
+    public function getUserProfile(Request $request, Vartotojas $user = null, PaginatorInterface $paginator, \Swift_Mailer $mailer)
     {
         $loggedUser = $this->getUser();
         if ($user !== null) {
@@ -93,11 +93,11 @@ class AtsiliepimuController extends AbstractController
                     $entityManager = $this->getDoctrine()->getManager();
                     $entityManager->persist($newRating);
                     $entityManager->flush();
-
+                    $this->sendNotificationAboutRating($user->getElPastas(), $user, $mailer);
                     return $this->redirect($request->getUri());
 
                 }
-                return $this->render('atsiliepimu/index.html.twig', [
+                return $this->render('profilis/index.html.twig', [
                     'title' => 'Atsiliepimai',
                     'user' => $user,
                     'form' => $form->createView(),
@@ -107,7 +107,7 @@ class AtsiliepimuController extends AbstractController
                 ]);
             }else{
 
-                return $this->render('atsiliepimu/index.html.twig', [
+                return $this->render('profilis/index.html.twig', [
                     'title' => 'Atsiliepimai',
                     'user' => $user,
                     'averageRating' => $averageRating,
@@ -118,5 +118,31 @@ class AtsiliepimuController extends AbstractController
 
         }
         return $this->redirectToRoute('app_main');
+    }
+
+    /**
+     * @Route("/vartotojas/zinutes", name="zinutes")
+     */
+    public function showAllConversations()
+    {
+        return $this->render('profilis/zinutes.html.twig');
+
+    }
+
+    public function sendNotificationAboutRating($email, Vartotojas $user, \Swift_Mailer $mailer){
+        $message = (new \Swift_Message('Pranešimas apie naują atsiliepimą'))
+            ->setFrom(['paumanma@gmail.com' => 'PAM^3 komanda'])
+            ->setTo($email)
+            ->setBody(
+                $this->renderView('emails/naujasAtsiliepimas.html.twig', array(
+                    'vartotojas' => $user,
+                )),
+                'text/html'
+            );
+        if (!$mailer->send($message, $failures)) {
+            return false;
+        }else{
+            return true;
+        }
     }
 }
