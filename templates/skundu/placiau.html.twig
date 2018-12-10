@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Skundai{% endblock %}
+
+{% block body %}
+    <div class="card-text" style="position: relative;">
+        <div class="container-fluid">
+            <br>
+            <div class="row">
+                <div class="col-sm-2">
+                    Pareiškėjas:
+                </div>
+                <div class="col-sm-4">
+                    {{ skundas.fkPareiskejas.vardas }} {{ skundas.fkPareiskejas.pavarde }}
+                </div>
+                <div class="col-sm-2">
+                    Data:
+                </div>
+                <div class="col-sm-4">
+                    {{ skundas.data|date('Y-m-d') }}
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-2">
+                    Gavėjas:
+                </div>
+                <div class="col-sm-4">
+                    {{ skundas.fkGavejas.vardas }} {{ skundas.fkGavejas.pavarde }}
+                </div>
+                <div class="col-sm-2">
+                    Tipas:
+                </div>
+                <div class="col-sm-4">
+                    {{ skundas.fkSkundoTipas.pavadinimas }}
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-2">
+                    Skundas:
+                </div>
+                <div class="col-sm">
+                    {{ skundas.skundas }}
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary btn-outline-primary" onclick="history.go(-1);">Grįžti</button>
+    </div>
+{% endblock %}

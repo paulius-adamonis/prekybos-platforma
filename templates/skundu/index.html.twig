@@ -4,6 +4,11 @@
 
 {% block body %}
     <div class="card-text" style="position: relative;">
+        {% if message is defined %}
+        <div class="alert alert-success" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
         Nusiskundimai yra skirti tam, jog su jūsų pagalba galėtume sumažinti apgavysčių,
         siukčiavimo atvėjų. Jeigu norite peržiūrėti savo parašytus skundus spauskite “Žiūrėti sąrašą”,
         jeigu norite parašyti naują skundą spauskite “Rašyti naują skundą”.

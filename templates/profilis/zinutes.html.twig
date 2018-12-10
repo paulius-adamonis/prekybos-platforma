@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello!{% endblock %}
+
+
+{% block content %}
+
+
+
+    <!-- container element in which TalkJS will display a chat UI -->
+    <div id="inbox-container" style="width: 90%; margin: 30px; height: 500px"><i>Loading chat...</i></div>
+
+    <!-- TalkJS initialization code, which we'll customize in the next steps -->
+
+    <script>
+        Talk.ready.then(function() {
+            var me = new Talk.User({
+                id: "{{ app.user.id }}",
+                name: "{{ app.user.vardas }}",
+                email: "{{ app.user.elPastas }}",
+                {% if app.user.id == 1 %}
+                photoUrl: "https://demo.talkjs.com/img/alice.jpg",
+                {% else %}
+                photoUrl: "https://demo.talkjs.com/img/sebastian.jpg",
+                {% endif %}
+            });
+            window.talkSession = new Talk.Session({
+                appId: "tGgMOqPj",
+                me: me
+            });
+
+            var inbox = talkSession.createInbox();
+            inbox.mount(document.getElementById("inbox-container"));
+        });
+    </script>
+{% endblock %}
