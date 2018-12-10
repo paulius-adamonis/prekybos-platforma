@@ -19,6 +19,21 @@ class PrekiuPriklausymasRepository extends ServiceEntityRepository
         parent::__construct($registry, PrekiuPriklausymas::class);
     }
 
+    public function findPrekesBySandelisNotDeleted($sandelioId){
+        return $this->getEntityManager()
+            ->createQuery('select p.id, p.kiekis, (p.fkSandelis), (p.fkKokybe), (p.fkParduotuvesPreke), pp.pavadinimas as pavadinimas
+                                    from App\Entity\PrekiuPriklausymas p
+                                    INNEr JOIN App\Entity\ParduotuvesPreke pp
+                                    INNEr JOIN App\Entity\Sandelis s
+                                    where pp.id=p.fkParduotuvesPreke
+                                    and s.id = :sandelioId
+                                    and p.fkSandelis = s.id
+                                    and pp.arPasalinta = 0
+                                    and p.kiekis < 5' )
+            ->setParameter('sandelioId', $sandelioId)
+            ->getArrayResult();
+    }
+
     // /**
     //  * @return PrekiuPriklausymas[] Returns an array of PrekiuPriklausymas objects
     //  */
@@ -34,7 +49,6 @@ class PrekiuPriklausymasRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?PrekiuPriklausymas

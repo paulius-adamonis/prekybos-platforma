@@ -1,4 +1,19 @@
 {% extends 'baseSandelis.html.twig' %}
+                {% block sidenav %}
+                    <a class="list-group-item" href="{{ path('sandeliuprekes') }}">Parduotuvės prėkės</a>
+                    {% if not is_granted("ROLE_ADMIN") %}
+                        <a class="list-group-item" href="{{ path('sandelis') }}">Sandelis</a>
+                    {% endif %}
+                    {% if is_granted("ROLE_ADMIN") %}
+                        <a class="list-group-item" href="{{ path('sandelis') }}">Sandeliai</a>
+                    {% endif %}
+                    <a class="list-group-item" href="{{ path('sandelis') }}/{{ sandelioId }}/islaida">
+                        Sandėlio išlaidos
+                    </a>
+                    <a class="list-group-item" href="{{ path('sandelis') }}/{{ sandelioId }}/trukstama">
+                        Trukstamos sandėlio prekės
+                    </a>
+                {% endblock %}
 {% block body %}
     <h1>{{ sandelis.adresas }}</h1>
     <a class="btn btn-primary btn-outline-primary" href="{{ path('sandelis') }}/{{ sandelioId }}/prekenew">Pridėti prekę</a>
@@ -35,3 +50,4 @@
     </table>
     <button class="btn btn-primary btn-outline-primary" onclick="history.go(-1);">Grizti</button>
 {% endblock %}
+

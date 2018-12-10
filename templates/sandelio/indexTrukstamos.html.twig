@@ -1,0 +1,24 @@
+{% extends 'baseSandelis.html.twig' %}
+{% block body %}
+    <h1>{{ sandelis.adresas }}</h1>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Pavadinimas</th>
+            <th>Kiekis</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for preke in prekes %}
+            <tr>
+                <td>{{ preke.1 }}</td>
+                <td>{{ preke.pavadinimas }}</td>
+                <td>{{ preke.kiekis }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <button class="btn btn-primary btn-outline-primary" onclick="history.go(-1);">Grizti</button>
+{% endblock %}
+
