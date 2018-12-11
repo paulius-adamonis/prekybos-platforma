@@ -27,14 +27,15 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 class ParduotuvesController extends AbstractController
 {
         /**
-     * @Route("/parduotuve/{productId}", name="parduotuve", methods={"GET"})
+     * @Route("/parduotuve/{productId}/{sandelisId}", name="parduotuve", methods={"GET"})
      */
-    public function index($productId = '-1')
+    public function index($productId = '-1', $sandelisId = '-1')
     {
         $products = array();
         $product = null;
         $prekSand = null;
         $pard = null;
+        $kiekis = 0;
         
         $products = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findBy(array());
 
@@ -50,17 +51,28 @@ class ParduotuvesController extends AbstractController
                     'fkParduotuvesPreke' => $productId
                 )
             );
-
-            $kiekis = 0;
-
             foreach($priklausimas as $value){
                 $kiekis += $value->getKiekis();
             }
 
-            $priklausimas[0]->getFkSandelis();
             $i = 0;
             foreach ($priklausimas as $val){
                 $prekSand[$i] = $val->getFkSandelis();
+                $i++;
+            }
+        }
+        if ( $sandelisId != '-1' ){
+            $products = array();
+            $priklausimas = $this->getDoctrine()->getRepository(PrekiuPriklausymas::class)->findBy(
+                array(
+                    'fkSandelis' => $sandelisId
+                )
+            );
+
+            $i = 0;
+            foreach ($priklausimas as $val){
+                $products[$i] = $val->getFkParduotuvesPreke();
+                $i++;
             }
         }
 

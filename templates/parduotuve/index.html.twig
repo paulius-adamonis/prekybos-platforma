@@ -13,7 +13,7 @@
             <div class="product-price">
                 {# <span> {{ product.kaina }}€ </span> #}
                 {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
-                <button onclick="{{'window.location.href = \'' ~ currentPath ~ '/' ~ product.id  ~ '\''}}">daugiau</button>
+                <button onclick="{{'window.location.href = \'/parduotuve/' ~ product.id  ~ '\''}}">daugiau</button>
             </div>
         </div>
     {% endfor %}
@@ -24,11 +24,13 @@
             <div class="product-card">
                 <img src="{{ asset('images/' ~ product.nuotrauka) }}">
                 <div class="product-card-info">
-                    <button class="close" onclick="window.history.back()"><span class="fas fa-window-close"></button>
+                    <button class="close" onclick="window.history.back()"><span class="fas fa-window-close"></span></button>
                     <h5>{{ product.pavadinimas }}</h5>
                     <p class="product-card-resume">{{ product.aprasymas }}</p>
                      {% for sandelis in sandeliai %}
                         <p>Sandelis: {{sandelis.adresas}}</p>
+                         {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+                         <button class="card-button" onclick="{{'window.location.href = \'-1/' ~ sandelis.id ~ '\''}}">Rodyti sandėlio prekes</button>
                      {% endfor %}
                       {% if kiekis > 0 %}
                       <p>Prekių kiekis:{{kiekis}}</p>
@@ -36,18 +38,6 @@
                     {% if kiekis <= 0  %}
                       <p style="color: red;">Išparduota</p>
                       {% endif %}
-                         
-                </div>
-                <div class="price-comments">
-                    {# <span class="card-price">{{ product.kaina }}€</span> #}
-                    <button class="card-button">komentuoti</button>
-                    <h5 class="comment-heading">Komentarai</h5>
-                    {# {% set i = 0 %} #}
-                    {# {% for comment in comments %}
-                        <h6 class="commenter">{{ commenters[i].vardas }} {{ commenters[i].pavarde }}</h6>
-                        <p class="comment">{{ comment.tekstas}}</p>
-                        {% set i = i + 1 %}
-                    {% endfor %} #}
                 </div>
             </div>
         {% endif %}
