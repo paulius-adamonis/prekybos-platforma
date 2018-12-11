@@ -18,7 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class SandelioController extends AbstractController
+class SandelioValdiklis extends AbstractController
 {
     /**
      * @Route("/sandelis", name="sandelis")
@@ -33,7 +33,7 @@ class SandelioController extends AbstractController
                 array ('sandeliai' => $sandeliai,
                     'title' => 'Sandeliai'));
         }
-        elseif ($auth_checker->isGranted('ROLE_DARBUOTOJAS') ||
+        elseif ($auth_checker->isGranted('ROLE_DARBININKAS') ||
             $auth_checker->isGranted('ROLE_VALDYTOJAS'))
         {
             $user = $this->getUser();

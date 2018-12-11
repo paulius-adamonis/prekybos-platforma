@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class SandelioPrekesController extends AbstractController
+class SandelioPrekesValdiklis extends AbstractController
 {
     /**
      * @Route("/sandelis/{sandelioId}", name="prekes")
@@ -122,7 +122,8 @@ class SandelioPrekesController extends AbstractController
                 }
                 return $this->render('sandelio_prekes/new.html.twig', array(
                     'form' => $form->createView(),
-                    'title' => 'Tvarkyti prekę'));
+                    'title' => 'Tvarkyti prekę: '.$prekesPriklausymas->getFkParduotuvesPreke()->getPavadinimas().', ID:'.$prekesPriklausymas->getFkParduotuvesPreke()->getId()
+                    ));
             }
             return $this->redirect('/sandelis/'.$sandelioId);
         }
