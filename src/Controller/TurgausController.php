@@ -115,6 +115,9 @@ class TurgausController extends AbstractController
                 if ($sell->getFkPardavejas() == $sell->getFkPirkejas() && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija() == $categoryArr[0] && $sell->getFkTurgausPreke()->isArPasalinta() == 0) {
                     array_push($products, $sell->getFkTurgausPreke());
                 }
+                else if (strtoupper($type) == strtoupper('Aukcionas') && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija() == $categoryArr[0] && $sell->getFkTurgausPreke()->isArPasalinta() == 0) {
+                    array_push($products, $sell->getFkTurgausPreke());
+                }
             }
 
             switch($sort) {
@@ -241,7 +244,20 @@ class TurgausController extends AbstractController
         
                     $entityManager->flush();
                 }
-            }        
+            }
+            
+            if (strtoupper($type) == strtoupper('Aukcionas') && $productId != '-1') {
+                return $this->render('turgus/products.twig', [
+                    'selected' => $type,
+                    'category' => $categoryArr[0],
+                    'products' => $products,
+                    'productId' => $productId,
+                    'seller' => $seller,
+                    'comments' => $comments,
+                    'commenters' => $commenters,
+                    'bestBetter' => $selling[0]->getFkPirkejas()
+                ]);
+            }
             
             return $this->render('turgus/products.twig', [
                 'selected' => $type,
@@ -823,7 +839,7 @@ class TurgausController extends AbstractController
                         'arPasalinta' => 0
                     )
                 );
-                $product = $products[0];
+                $product = $productsArr[0];
                 
                 $newComment->setTekstas($text);
                 $newComment->setData($date);
@@ -854,5 +870,95 @@ class TurgausController extends AbstractController
                 'link' => '/'
             ]);
         }
+    }
+
+     /**
+     * @Route("/turgus-statymo-patvirtinimas/{productId}"), methods={"GET", "POST"})
+     */
+    public function betConfirm($productId = '-1', Request $request)
+    {
+        if ($productId == null) {
+            return $this->render('turgus/requestSuccess.twig', [
+                'msg' => '404, ar norite grįžti?',
+                'link' => '/'
+            ]);
+        }
+        if ($this->getUser() == null) {
+            return $this->render('turgus/requestSuccess.twig', [
+                'msg' => 'Prašome prisijungti.',
+                'link' => '/login'
+            ]);
+        }
+        $seller = $this->getDoctrine()->getRepository(TurgausPardavimas::class)->findBy(
+            array(
+                'fkTurgausPreke' => $productId
+            )
+        );
+
+        $seller = $seller[0];
+
+        if ($this->getUser() == $seller->getFkPardavejas()) {
+            return $this->render('turgus/requestSuccess.twig', [
+                'msg' => 'Negalima statyti už savo paties prekę.',
+                'link' => '/turgus'
+            ]);
+        }
+
+        $choices = array();
+        $choices["Taip"] = 1;
+        $choices["Ne"] = 0;
+
+        $form = $this->createFormBuilder(array())
+        ->add('ar_tikrai_norite_pastatyti', ChoiceType::class, array(
+            'label' => 'Ar tikrai norite pastatyti?',
+            'choices' => $choices
+        ))
+        ->add('save', SubmitType::class, array('label' => 'Pasirinkti'))
+        ->getForm();
+
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            $answer = $form['ar_tikrai_norite_pastatyti']->getData();
+            
+            if ($answer == '0') {
+                return $this->render('turgus/requestSuccess.twig', [
+                    'msg' => 'Grįžti atgal?.',
+                    'link' => '/turgus'
+                ]);
+            }
+
+            $sell = $this->getDoctrine()->getRepository(TurgausPardavimas::class)->findBy(
+                array(
+                    'fkTurgausPreke' => $productId
+                )
+            );
+
+            $sell = $sell[0];
+            $sell->setFkPirkejas($this->getUser());
+
+            $product = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                array(
+                    'id' => $productId
+                )
+            );
+
+            $product = $product[0];
+            $product->setKaina(intval($product->getKaina()) + intval($product->getMinimalusStatymas()));
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($sell);
+            $entityManager->persist($product);
+            $entityManager->flush();
+
+            return $this->render('turgus/requestSuccess.twig', [
+                'msg' => 'Pastatyta sėkmingai.',
+                'link' => '/turgus'
+            ]);
+        }
+        
+        return $this->render('turgus/formCard.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }

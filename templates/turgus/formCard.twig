@@ -1,0 +1,12 @@
+{% extends 'turgus/base.html.twig' %}
+
+{% block body %}
+    <div class="overlay" onclick="window.history.back()">
+    </div>
+    <div class="form-card">
+        <button class="close" onclick="window.history.back()"><span class="fas fa-window-close"></button>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

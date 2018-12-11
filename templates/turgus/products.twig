@@ -39,6 +39,12 @@
                     <span class="card-price">{{ product.kaina }}€</span>
                     {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
                     <button class="card-button" onclick="{{ 'location = \'' ~ currentPath ~ '/komentaras\'' }}">komentuoti</button>
+                    {% if selected | upper == 'Aukcionas' | upper %}
+                        <button class="card-button bet" onclick="{{ 'location = \'/turgus-statymo-patvirtinimas/' ~ productId ~ '\'' }}">pastatyti {{ product.kaina }}€ + {{ product.minimalusStatymas }}€</button>
+                    {% endif %}
+                    {% if selected | upper == 'Aukcionas' | upper %}
+                        <p class="comment-heading">Daugiausiai pastatė {{ bestBetter.vardas }} {{ bestBetter.pavarde }}</p>
+                    {% endif %}
                     <h5 class="comment-heading">Komentarai</h5>
                     {% set i = 0 %}
                     {% for comment in comments %}
