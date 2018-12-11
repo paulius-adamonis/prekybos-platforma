@@ -337,9 +337,9 @@ class TurgausController extends AbstractController
     }
 
     /**
-     * @Route("/turgus-nauja-preke"), methods={"GET", "POST"})
+     * @Route("/turgus-nauja-preke/{type}"), methods={"GET", "POST"})
      */
-    public function newProduct(Request $request)
+    public function newProduct($type = 0, Request $request)
     {
         if ($this->getUser() == null) {
             return $this->render('turgus/requestSuccess.twig', [
@@ -395,7 +395,211 @@ class TurgausController extends AbstractController
         $newProduct = new TurgausPreke();
         $newSell = new TurgausPardavimas();
 
-        $form = $this->createFormBuilder(array($newProduct, $newSell))
+        if($type == '0') {
+            $sellTypes = array();
+            $sellTypes['Įprastas'] = 'Įprastas';
+            $sellTypes['Aukcionas'] = 'Aukcionas';
+            $sellTypes['Mainai'] = 'Mainai';
+
+            $form = $this->createFormBuilder(array($newProduct, $newSell))
+            ->add('pardavimo_tipas', ChoiceType::class,
+                array(
+                    'choices' => $sellTypes
+                )
+            )
+            ->add('save', SubmitType::class, array('label' => 'Pridėti prekę'))
+            ->getForm();
+
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $type = $form['pardavimo_tipas']->getData();
+                return $this->redirect('/turgus-nauja-preke/'.$type);
+            }
+
+            return $this->render('turgus/formCard.twig', [
+                'form' => $form->createView()
+            ]);
+        }
+
+        else if(strtoupper($type) == strtoupper('Aukcionas')) {
+            $form = $this->createFormBuilder(array($newProduct, $newSell))
+            ->add('prekes_pavadinimas', TextType::class, array('label' => 'Prekės pavadinimas'))
+            ->add('kiekis', IntegerType::class)
+            ->add('aprasymas', TextType::class, array('label' => 'Aprašymas'))
+            ->add('kategorija', ChoiceType::class, array(
+                'choices' => array(
+                    'Įprasti pardavimai' => $simpleCategoryChoice,
+                    'Aukcionas' => $auctionCategoryChoice,
+                    'Mainai' => $tradeCategoryChoice
+                )
+            ))
+            ->add('nuotrauka', FileType::class)
+            ->add('pradine_kaina', IntegerType::class, array('label' => 'Pradinė kaina'))
+            ->add('maziausias_statymas', IntegerType::class, array('label' => 'Mažiausias statymas'))
+            ->add('aukciono_trukme', IntegerType::class, array('label' => 'Aukciono trukmė valandomis'))
+            ->add('save', SubmitType::class, array('label' => 'Pridėti prekę'))
+            ->getForm();
+
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $fileName = $form['nuotrauka']->getData()->getClientOriginalName();
+                if ( strpos($fileName, '.png') != false){
+                    $name = $form['prekes_pavadinimas']->getData();
+                    $qty = $form['kiekis']->getData();
+                    $about = $form['aprasymas']->getData();
+                    $category = $form['kategorija']->getData();
+                    $startingPrice = $form['pradine_kaina']->getData();
+                    $minBet = $form['maziausias_statymas']->getData();
+                    $auctionLength = $form['aukciono_trukme']->getData();
+                    $fileIndex = 0;
+                    $fileName = $fileIndex.".png";
+                    while (file_exists('images/'.$fileName)) {
+                        $fileIndex++;
+                        $fileName = $fileIndex.".png";
+                    }
+                    $file = $form['nuotrauka']->getData();
+                    $directory = 'images/';
+                    $file->move($directory, $fileName);
+
+                    $category = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(
+                        array(
+                            'id' => $category
+                        )
+                    );
+
+                    $type = $category[0]->getFkPardavimoTipas();
+
+                    $newProduct->setPavadinimas($name);
+                    $newProduct->setAprasymas($about);
+                    $newProduct->setNuotrauka($fileName);
+                    $newProduct->setPradineKaina($startingPrice);
+                    $newProduct->setPabaigosData(new \DateTime());
+                    $newProduct->setData(new \DateTime());
+                    $newProduct->setMinimalusStatymas($minBet);
+                    $newProduct->setFkTurgPrekesKategorija($category[0]);
+                    $newProduct->setArPasalinta(0);
+                    $newProduct->setKaina($startingPrice);
+
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($newProduct);
+                    $entityManager->flush();
+
+                    $newProductId = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                        array(
+                            'nuotrauka' => $fileName
+                        )
+                    );                
+                    $newSell->setData(new \DateTime());
+                    $newSell->setKiekis($qty);
+                    $newSell->setFkPardavejas($this->getUser());
+                    $newSell->setFkPirkejas($this->getUser());
+                    $newSell->setFkTurgausPreke($newProductId[0]);
+
+                    $entityManager->persist($newSell);
+                    $entityManager->flush();
+
+
+                    return $this->render('turgus/requestSuccess.twig', [
+                        'msg' => 'Prekė sėkmingai pridėta į aukcioną.',
+                        'link' => '/turgus-mano-prekes'
+                    ]);
+                }
+
+                return $this->render('turgus/requestSuccess.twig', [
+                    'msg' => 'Netinkamas pridėtos nuotraukos plėtinys, turėtų būti .png',
+                    'link' => '/turgus-nauja-preke'
+                ]);
+            }
+        }
+        else if(strtoupper($type) == strtoupper('Mainai')) {
+            $form = $this->createFormBuilder(array($newProduct, $newSell))
+            ->add('prekes_pavadinimas', TextType::class, array('label' => 'Prekės pavadinimas'))
+            ->add('kiekis', IntegerType::class)
+            ->add('aprasymas', TextType::class, array('label' => 'Aprašymas'))
+            ->add('kategorija', ChoiceType::class, array(
+                'choices' => array(
+                    'Įprasti pardavimai' => $simpleCategoryChoice,
+                    'Aukcionas' => $auctionCategoryChoice,
+                    'Mainai' => $tradeCategoryChoice
+                )
+            ))
+            ->add('nuotrauka', FileType::class)
+            ->add('ieskomos_prekes_aprasymas', TextType::class, array('label' => 'Ieškomos prekės aprašymas', 'required' => false))
+            ->add('save', SubmitType::class, array('label' => 'Pridėti prekę'))
+            ->getForm();
+
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $fileName = $form['nuotrauka']->getData()->getClientOriginalName();
+                if ( strpos($fileName, '.png') != false){
+                    $name = $form['prekes_pavadinimas']->getData();
+                    $qty = $form['kiekis']->getData();
+                    $about = $form['aprasymas']->getData();
+                    $category = $form['kategorija']->getData();
+                    $lookingForAbout = $form['ieskomos_prekes_aprasymas']->getData();
+                    $fileIndex = 0;
+                    $fileName = $fileIndex.".png";
+                    while (file_exists('images/'.$fileName)) {
+                        $fileIndex++;
+                        $fileName = $fileIndex.".png";
+                    }
+                    $file = $form['nuotrauka']->getData();
+                    $directory = 'images/';
+                    $file->move($directory, $fileName);
+
+                    $category = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(
+                        array(
+                            'id' => $category
+                        )
+                    );
+
+                    $type = $category[0]->getFkPardavimoTipas();
+
+                    $newProduct->setPavadinimas($name);
+                    $newProduct->setAprasymas($about);
+                    $newProduct->setNuotrauka($fileName);
+                    $newProduct->setData(new \DateTime());
+                    $newProduct->setIeskomosPrekesAprasymas($lookingForAbout);
+                    $newProduct->setFkTurgPrekesKategorija($category[0]);
+                    $newProduct->setArPasalinta(0);
+
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($newProduct);
+                    $entityManager->flush();
+
+                    $newProductId = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                        array(
+                            'nuotrauka' => $fileName
+                        )
+                    );                
+                    $newSell->setData(new \DateTime());
+                    $newSell->setKiekis($qty);
+                    $newSell->setFkPardavejas($this->getUser());
+                    $newSell->setFkPirkejas($this->getUser());
+                    $newSell->setFkTurgausPreke($newProductId[0]);
+
+                    $entityManager->persist($newSell);
+                    $entityManager->flush();
+
+
+                    return $this->render('turgus/requestSuccess.twig', [
+                        'msg' => 'Prekė sėkmingai pridėta į mainus.',
+                        'link' => '/turgus-mano-prekes'
+                    ]);
+                }
+
+                return $this->render('turgus/requestSuccess.twig', [
+                    'msg' => 'Netinkamas pridėtos nuotraukos plėtinys, turėtų būti .png',
+                    'link' => '/turgus-nauja-preke'
+                ]);
+            }
+        }
+
+        else if(strtoupper($type) == strtoupper('Įprastas')) {
+            $form = $this->createFormBuilder(array($newProduct, $newSell))
             ->add('prekes_pavadinimas', TextType::class, array('label' => 'Prekės pavadinimas'))
             ->add('kaina', IntegerType::class)
             ->add('kiekis', IntegerType::class)
@@ -408,90 +612,75 @@ class TurgausController extends AbstractController
                 )
             ))
             ->add('nuotrauka', FileType::class)
-            ->add('pradine_kaina', IntegerType::class, array('label' => 'Pradinė kaina', 'required' => false))
-            ->add('maziausias_statymas', IntegerType::class, array('label' => 'Mažiausias statymas', 'required' => false))
-            ->add('aukciono_trukme', IntegerType::class, array('label' => 'Aukciono trukmė valandomis', 'required' => false))
-            ->add('ieskomos_prekes_aprasymas', TextType::class, array('label' => 'Ieškomos prekės aprašymas', 'required' => false))
             ->add('save', SubmitType::class, array('label' => 'Pridėti prekę'))
             ->getForm();
 
-        $form->handleRequest($request);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $fileName = $form['nuotrauka']->getData()->getClientOriginalName();
-            if ( strpos($fileName, '.png') != false){
-                $name = $form['prekes_pavadinimas']->getData();
-                $price = $form['kaina']->getData();
-                $qty = $form['kiekis']->getData();
-                $about = $form['aprasymas']->getData();
-                $category = $form['kategorija']->getData();
-                $startingPrice = $form['pradine_kaina']->getData();
-                $minBet = $form['maziausias_statymas']->getData();
-                $auctionLength = $form['aukciono_trukme']->getData();
-                $lookingForAbout = $form['ieskomos_prekes_aprasymas']->getData();
-                $fileIndex = 0;
-                $fileName = $fileIndex.".png";
-                while (file_exists('images/'.$fileName)) {
-                    $fileIndex++;
+            if ($form->isSubmitted() && $form->isValid()) {
+                $fileName = $form['nuotrauka']->getData()->getClientOriginalName();
+                if ( strpos($fileName, '.png') != false){
+                    $name = $form['prekes_pavadinimas']->getData();
+                    $price = $form['kaina']->getData();
+                    $qty = $form['kiekis']->getData();
+                    $about = $form['aprasymas']->getData();
+                    $category = $form['kategorija']->getData();
+                    $fileIndex = 0;
                     $fileName = $fileIndex.".png";
-                }
-                $file = $form['nuotrauka']->getData();
-                $directory = 'images/';
-                $file->move($directory, $fileName);
+                    while (file_exists('images/'.$fileName)) {
+                        $fileIndex++;
+                        $fileName = $fileIndex.".png";
+                    }
+                    $file = $form['nuotrauka']->getData();
+                    $directory = 'images/';
+                    $file->move($directory, $fileName);
 
-                $category = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(
-                    array(
-                        'id' => $category
-                    )
-                );
+                    $category = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(
+                        array(
+                            'id' => $category
+                        )
+                    );
 
-                $type = $category[0]->getFkPardavimoTipas();
+                    $type = $category[0]->getFkPardavimoTipas();
 
-                $newProduct->setPavadinimas($name);
-                $newProduct->setAprasymas($about);
-                $newProduct->setNuotrauka($fileName);
-                $newProduct->setPradineKaina($startingPrice);
-                $newProduct->setPabaigosData(new \DateTime());
-                $newProduct->setData(new \DateTime());
-                $newProduct->setMinimalusStatymas($minBet);
-                $newProduct->setIeskomosPrekesAprasymas($lookingForAbout);
-                $newProduct->setFkTurgPrekesKategorija($category[0]);
-                $newProduct->setArPasalinta(0);
-                if ($type->getId() == 2) {
-                    $newProduct->setKaina($startingPrice);
-                } else {
+                    $newProduct->setPavadinimas($name);
+                    $newProduct->setAprasymas($about);
+                    $newProduct->setNuotrauka($fileName);
+                    $newProduct->setData(new \DateTime());
+                    $newProduct->setFkTurgPrekesKategorija($category[0]);
+                    $newProduct->setArPasalinta(0);
                     $newProduct->setKaina($price);
+
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($newProduct);
+                    $entityManager->flush();
+
+                    $newProductId = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
+                        array(
+                            'nuotrauka' => $fileName
+                        )
+                    );                
+                    $newSell->setData(new \DateTime());
+                    $newSell->setKiekis($qty);
+                    $newSell->setFkPardavejas($this->getUser());
+                    $newSell->setFkPirkejas($this->getUser());
+                    $newSell->setFkTurgausPreke($newProductId[0]);
+
+                    $entityManager->persist($newSell);
+                    $entityManager->flush();
+
+
+                    return $this->render('turgus/requestSuccess.twig', [
+                        'msg' => 'Prekė sėkmingai pridėta į įprastus pardavimus.',
+                        'link' => '/turgus-mano-prekes'
+                    ]);
                 }
-
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($newProduct);
-                $entityManager->flush();
-
-                $newProductId = $this->getDoctrine()->getRepository(TurgausPreke::class)->findBy(
-                    array(
-                        'nuotrauka' => $fileName
-                    )
-                );                
-                $newSell->setData(new \DateTime());
-                $newSell->setKiekis($qty);
-                $newSell->setFkPardavejas($this->getUser());
-                $newSell->setFkPirkejas($this->getUser());
-                $newSell->setFkTurgausPreke($newProductId[0]);
-
-                $entityManager->persist($newSell);
-                $entityManager->flush();
-
 
                 return $this->render('turgus/requestSuccess.twig', [
-                    'msg' => 'Prekė pridėta sėkmingai.',
-                    'link' => '/turgus-mano-prekes'
+                    'msg' => 'Netinkamas pridėtos nuotraukos plėtinys, turėtų būti .png',
+                    'link' => '/turgus-nauja-preke'
                 ]);
             }
-
-            return $this->render('turgus/requestSuccess.twig', [
-                'msg' => 'Netinkamas pridėtos nuotraukos plėtinys, turėtų būti .png',
-                'link' => '/turgus-nauja-preke'
-            ]);
         }
 
         return $this->render('turgus/newProduct.twig', [
