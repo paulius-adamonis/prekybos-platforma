@@ -24,7 +24,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * @package App\Controller
  * @IsGranted("ROLE_ADMIN")
  */
-class EparduotuvesAdministravimasController extends AbstractController
+class EparduotuvesAdministravimoValdiklis extends AbstractController
 {
     /******************************************
      *                Prekes

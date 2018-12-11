@@ -1,12 +1,38 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
-<div class="card-text">{{ message }}
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'src/Controller/MainController.php'|file_link(0) }}">src/Controller/MainController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'templates/main/index.html.twig'|file_link(0) }}">templates/main/index.html.twig</a></code></li>
-    </ul>
-</div>
+    {% if not (is_granted("IS_AUTHENTICATED_FULLY")) or (is_granted('ROLE_USER')) %}
+        <p>
+            Sveiki atvykę į pagrindinį puslapį. Šios sistemos pagalba galite apsipirkti mūsų elektroninėje
+            parduotuvėje, arba, jeigu norite ką nors parduoti ar kuo nors apsimainyti, galite pasinaudoti mūsų elektroninio
+            turgaus funkcija. Jeigu iškils kokių nors sunkumų ar problemų naudojantis mūsų sistema, visada galite pasiskaityti
+            DUK skiltį, užduoti klausimą administracijai arba pranešti apie sukčiavimo atvejį.
+        </p>
+    {% endif %}
+    {% if is_granted('ROLE_VALDYTOJAS') %}
+        <p>
+            Kas liečia darbo reikalus, galite tvarkyti savo valdomą sandėlį: galite užsakyti prekes iš tiekėjų,
+            keisti turimų prekių skaičių, patvirtinti užsakytas prekes bei fiksuoti sandėlio išlaidas.
+        </p>
+    {% endif %}
+    {% if is_granted('ROLE_DARBININKAS') %}
+        <p>
+            Kas liečia darbo reikalus, galite fiksuoti savo darbo progresą.
+        </p>
+    {% endif %}
+    {% if is_granted('ROLE_MOD') %}
+        <p>
+            Kadangi turite moderatoriaus statusą, jūsų pareiga yra sąžiningai tvarkytis su nusiskundimais, nesąžiningais
+            vartotojais bei elektroninio turgaus prekėmis ir jų kategorijomis.
+        </p>
+    {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <p>
+            O kadangi esate sistemos administratorius, jums suteiktos teisės valdyti elektroninę parduotuvę:
+            tvarkyti jos darbuotojus, sandėlius, prekes bei kategorijas.
+        </p>
+    {% endif %}
+    <p>
+        {{ message }}
+    </p>
 {% endblock %}

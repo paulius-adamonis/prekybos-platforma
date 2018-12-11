@@ -16,7 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  * @package App\Controller
  * @IsGranted("ROLE_MOD")
  */
-class EturgausAdministravimasController extends AbstractController
+class EturgausAdministravimoValdiklis extends AbstractController
 {
     /**
      * @Route("/admin/turgus/prekes", name="admin_turgus_prekes")
