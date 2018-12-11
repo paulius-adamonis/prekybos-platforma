@@ -106,7 +106,7 @@
     margin-right: 4px;
 }
 
-.card-button {
+.card-button, #form_save {
     background: #009688;
     border: none;
     border-radius: 2px;
@@ -223,6 +223,10 @@
     font-weight: 500;
 }
 
+#form_kategorija {
+    width: 320px !important;
+}
+
 #moneyFlow {
     width: 500px !important;
     height: 500px !important;
@@ -269,6 +273,23 @@
 
 .my-products-header .fl-right button:first-of-type {
     margin-left: 152px;
+}
+
+.new-category-btn {    
+    background: #009688;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    float: right;
+    height: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 8px;
+    text-transform: uppercase;
+    width: 30px;
+    margin-top: -40px;
+    z-index: 5;
 }
 
 .order-by {
