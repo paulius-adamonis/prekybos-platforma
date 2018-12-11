@@ -51,7 +51,7 @@
             <ul class="navbar-nav">
                 {% set route = app.request.get('_route')|lower %}
                 <li class="nav-item">
-                    <a class="nav-link {{ 'app_main' in route ? 'active' }}" href="#">E-parduotuvė</a>
+                    <a class="nav-link {{ 'app_main' in route ? 'active' }}" href="{{ path('parduotuve') }}">E-parduotuvė</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="turgus">E-turgus</a>

@@ -39,7 +39,7 @@ class TurgausController extends AbstractController
 
         $categories = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(
             array(
-                'fkPardavimoTipas' => $categoryArr[0]->getId(),
+                'fkPardavimoTipas' => $categoryArr,
                 'arPasalinta' => 0
             )
         );
