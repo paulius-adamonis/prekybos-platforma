@@ -8,6 +8,7 @@
         <div class="alert alert-success" role="alert">{{ message }}</div>
     {% endfor %}
     <div id="accordion">
+        {% if is_granted("ROLE_USER") %}
         <div class="card duk">
             <div class="duk-header" id="headingOne">
                 <h5 class="mb-0">
@@ -26,6 +27,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         <div class="card duk">
             <div class="duk-header" id="headingTwo">
                 <h5 class="mb-0">

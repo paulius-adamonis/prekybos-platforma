@@ -7,13 +7,14 @@ use App\Entity\Skundas;
 use App\Entity\SkundoTipas;
 use App\Entity\Vartotojas;
 use App\Form\SkundasType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SkunduController extends AbstractController
+class SkunduValdiklis extends AbstractController
 {
     /**
      * @Route("/skundai", name="skundai")
@@ -28,6 +29,7 @@ class SkunduController extends AbstractController
     /**
      * @Route("/skundai/naujas", name="skundai_naujas")
      * @Method({"GET", "POST"})
+     * @IsGranted("ROLE_USER")
      */
     public function createAction(Request $request)
     {
@@ -65,6 +67,7 @@ class SkunduController extends AbstractController
     /**
      * @Route("/skundai/sarasas", name="skundai_sarasas")
      * @Method({"GET", "POST"})
+     * @IsGranted("ROLE_USER")
      */
     public function showAction(Request $request)
     {
@@ -81,6 +84,7 @@ class SkunduController extends AbstractController
      * @Route("/skundai/sarasas/{id}", name="skundai_sarasas_placiau")
      * @ParamConverter("complaint", class="App\Entity\Skundas", options={"id" = "id"})
      * @Method({"GET", "POST"})
+     * @IsGranted("ROLE_USER")
      */
     public function showMoreAction(Skundas $complaint = null)
     {
