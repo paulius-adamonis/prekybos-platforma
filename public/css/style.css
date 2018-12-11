@@ -101,15 +101,22 @@
     padding: 5px 10px 5px 10px;
 }
 
+.bet {
+    font-size: 10px !important;
+    margin-right: 4px;
+}
+
 .card-button {
     background: #009688;
     border: none;
     border-radius: 2px;
+    cursor: pointer;
     color: #fff;
     float: right;
     height: 36px;
     font-size: 14px;
     font-weight: 500;
+    margin-top: 8px;
     text-transform: uppercase;
     width: 120px;
 }
@@ -273,6 +280,10 @@
     font-size: 18px;
     font-weight: 500;
     text-transform: uppercase;
+}
+
+.selected-nav {
+    color: #fff !important;
 }
 
 .seller-email {

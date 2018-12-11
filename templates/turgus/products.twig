@@ -13,7 +13,9 @@
             <img src="{{ asset('images/' ~ product.nuotrauka) }}">
             <h5>{{ product.pavadinimas }}</h5>
             <div class="product-price">
-                <span> {{ product.kaina }}€ </span>
+                {% if selected | upper != 'Mainai' | upper %}
+                    <span> {{ product.kaina }}€ </span>
+                {% endif %}
                 {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
                 <button onclick="{{'window.location.href = \'' ~ currentPath ~ '/' ~ product.id  ~ '\''}}">daugiau</button>
             </div>
@@ -29,6 +31,10 @@
                     <button class="close" onclick="window.history.back()"><span class="fas fa-window-close"></button>
                     <h5>{{ product.pavadinimas }}</h5>
                     <p class="product-card-resume">{{ product.aprasymas }}</p>
+                    {% if selected | upper == 'Mainai' | upper %}
+                        <h6>Ieskoma:</h6>
+                        <p class="product-card-resume">{{ product.ieskomosPrekesAprasymas }}</p>
+                    {% endif %}
                 </div>
                 <div class="seller-info">
                     <p class="seller-phone">{{ seller.telNr }}</p>
@@ -36,8 +42,17 @@
                     <p class="seller-name">{{ seller.vardas }} {{ seller.pavarde }}</p>
                 </div>
                 <div class="price-comments">
-                    <span class="card-price">{{ product.kaina }}€</span>
-                    <button class="card-button">komentuoti</button>
+                    {% if selected | upper != 'Mainai' | upper %}
+                        <span class="card-price">{{ product.kaina }}€</span>
+                    {% endif %}
+                    {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+                    <button class="card-button" onclick="{{ 'location = \'' ~ currentPath ~ '/komentaras\'' }}">komentuoti</button>
+                    {% if selected | upper == 'Aukcionas' | upper %}
+                        <button class="card-button bet" onclick="{{ 'location = \'/turgus-statymo-patvirtinimas/' ~ productId ~ '\'' }}">pastatyti {{ product.kaina }}€ + {{ product.minimalusStatymas }}€</button>
+                    {% endif %}
+                    {% if selected | upper == 'Aukcionas' | upper %}
+                        <p class="comment-heading">Daugiausiai pastatė {{ bestBetter.vardas }} {{ bestBetter.pavarde }}</p>
+                    {% endif %}
                     <h5 class="comment-heading">Komentarai</h5>
                     {% set i = 0 %}
                     {% for comment in comments %}
