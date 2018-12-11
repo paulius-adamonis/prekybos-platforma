@@ -92,6 +92,38 @@ class PrekiuUzsakymas
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isArUzsakyta(): bool
+    {
+        return $this->arUzsakyta;
+    }
+
+    /**
+     * @param bool $arUzsakyta
+     */
+    public function setArUzsakyta(bool $arUzsakyta): void
+    {
+        $this->arUzsakyta = $arUzsakyta;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isArPristatyta(): bool
+    {
+        return $this->arPristatyta;
+    }
+
+    /**
+     * @param bool $arPristatyta
+     */
+    public function setArPristatyta(bool $arPristatyta): void
+    {
+        $this->arPristatyta = $arPristatyta;
+    }
+
     public function getFkSandelis(): ?Sandelis
     {
         return $this->fkSandelis;
