@@ -7,10 +7,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
- * Class AdministravimasController
+ * Class AdministravimoValdiklis
  * @package App\Controller
  */
-class AdministravimasController extends AbstractController
+class AdministravimoValdiklis extends AbstractController
 {
     /**
      * @Route("/admin", name="admin_main")

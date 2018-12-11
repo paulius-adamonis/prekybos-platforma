@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class SandelioPrekesController extends AbstractController
+class SandelioPrekesValdiklis extends AbstractController
 {
     /**
      * @Route("/sandelis/{sandelioId}", name="prekes")
@@ -24,8 +24,8 @@ class SandelioPrekesController extends AbstractController
     {
         $auth_checker = $this->get('security.authorization_checker');
         if($auth_checker->isGranted('ROLE_ADMIN') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_DARBUOTOJAS') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_VALDYTOJAS')) {
+            $auth_checker->isGranted('ROLE_DARBININKAS') ||
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
             $sandelis = $this->getDoctrine()->getRepository(Sandelis::class)->findOneBy(array(
                 'id' => $sandelioId
             ));
@@ -53,7 +53,7 @@ class SandelioPrekesController extends AbstractController
     {
         $auth_checker = $this->get('security.authorization_checker');
         if($auth_checker->isGranted('ROLE_ADMIN') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_VALDYTOJAS')) {
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
             $prekesPriklausymas = new PrekiuPriklausymas();
             $prekes = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findBy(['arPasalinta' => false]);
             $kokybes = $this->getDoctrine()->getRepository(Kokybe::class)->findAll();
@@ -103,7 +103,7 @@ class SandelioPrekesController extends AbstractController
     public function edit(Request $request,$sandelioId, $id){
         $auth_checker = $this->get('security.authorization_checker');
         if($auth_checker->isGranted('ROLE_ADMIN') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_VALDYTOJAS')) {
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
             $prekesPriklausymas = $this->getDoctrine()->getRepository(PrekiuPriklausymas::class)->findOneBy(array(
                 'id' => $id
             ));
@@ -122,7 +122,8 @@ class SandelioPrekesController extends AbstractController
                 }
                 return $this->render('sandelio_prekes/new.html.twig', array(
                     'form' => $form->createView(),
-                    'title' => 'Tvarkyti prekę'));
+                    'title' => 'Tvarkyti prekę: '.$prekesPriklausymas->getFkParduotuvesPreke()->getPavadinimas().', ID:'.$prekesPriklausymas->getFkParduotuvesPreke()->getId()
+                    ));
             }
             return $this->redirect('/sandelis/'.$sandelioId);
         }
@@ -139,7 +140,7 @@ class SandelioPrekesController extends AbstractController
     {
         $auth_checker = $this->get('security.authorization_checker');
         if ($auth_checker->isGranted('ROLE_ADMIN') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_VALDYTOJAS')) {
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
             $preke = $this->getDoctrine()->getRepository(PrekiuPriklausymas::class)->findOneBy(array(
                 'id' => $id
             ));
@@ -167,8 +168,8 @@ class SandelioPrekesController extends AbstractController
     {
         $auth_checker = $this->get('security.authorization_checker');
         if($auth_checker->isGranted('ROLE_ADMIN') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_DARBUOTOJAS') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_VALDYTOJAS')) {
+            $auth_checker->isGranted('ROLE_DARBININKAS') ||
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
             $prekesPriklausymas = $this->getDoctrine()->getRepository(PrekiuPriklausymas::class)->findOneBy(array(
                 'id' =>$id
             ));
@@ -210,8 +211,8 @@ class SandelioPrekesController extends AbstractController
     {
         $auth_checker = $this->get('security.authorization_checker');
         if($auth_checker->isGranted('ROLE_ADMIN') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_DARBUOTOJAS') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_VALDYTOJAS')) {
+            $auth_checker->isGranted('ROLE_DARBININKAS') ||
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
             $preke = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findOneBy(array(
                 'id' => $id,
                 'arPasalinta' => false
@@ -237,7 +238,8 @@ class SandelioPrekesController extends AbstractController
     public function Prekes()
     {
         $auth_checker = $this->get('security.authorization_checker');
-        if($auth_checker->isGranted('ROLE_ADMIN') )
+        if($auth_checker->isGranted('ROLE_ADMIN') ||
+            $auth_checker->isGranted('ROLE_VALDYTOJAS') ) {
             $prekes = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findBy(['arPasalinta' => false]);
             if ($prekes) {
                 return $this->render('sandelio_prekes/visosPrekes.html.twig', array(
@@ -245,6 +247,7 @@ class SandelioPrekesController extends AbstractController
                     'prekes' => $prekes
                 ));
             }
+        }
         else {
             return $this->redirectToRoute('app_main');
         }
@@ -258,7 +261,8 @@ class SandelioPrekesController extends AbstractController
     public function ShowPreke($id)
     {
         $auth_checker = $this->get('security.authorization_checker');
-        if($auth_checker->isGranted('ROLE_ADMIN')) {
+        if($auth_checker->isGranted('ROLE_ADMIN') ||
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
             $preke = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findOneBy(array(
                 'id' => $id,
                 'arPasalinta' => false
