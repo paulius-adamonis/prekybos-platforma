@@ -1,0 +1,37 @@
+{% extends 'baseSandelis.html.twig' %}
+
+{% block body %}
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Užsakymo ID</th>
+            <th>Prekės ID</th>
+            <th>Prekė</th>
+            <th>Kiekis</th>
+            <th>Sandelis</th>
+            <th>Busena</th>
+            <th>Veiksmai</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for uzsakymas in uzsakymai %}
+            <tr>
+                <td>{{ uzsakymas.id }}</td>
+                <td>{{ uzsakymas.fkParduotuvesPreke.id }}</td>
+                <td>{{ uzsakymas.fkParduotuvesPreke.pavadinimas }}</td>
+                <td>{{ uzsakymas.kiekis }}</td>
+                <td>{{ uzsakymas.fkSandelis.adresas }}</td>
+                {% if not uzsakymas.arUzsakyta %}<td>Neužsakyta</td>
+                    <td>
+                        <a class="btn btn-primary btn-outline-primary" href="/sandelis/uzsakymai/{{ uzsakymas.fkSandelis.id }}/{{ uzsakymas.fkParduotuvesPreke.id }}/{{ uzsakymas.id }}/{{ uzsakymas.kiekis }}/uzsakyti">Užsakyti</a></td>
+                {% elseif not uzsakymas.arPristatyta %}<td style="color: goldenrod">Užsakyta</td>
+                    <td>
+                        <a class="btn btn-primary btn-outline-primary" href="/sandelis/uzsakymai/{{ uzsakymas.fkSandelis.id }}/{{ uzsakymas.fkParduotuvesPreke.id }}/{{ uzsakymas.id }}/{{ uzsakymas.kiekis }}/pristatyta">Prekės pristatytos į sandėlį</a></td>
+                {% else %} <td style="color: forestgreen">Pristatytas</td>
+                    <td></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

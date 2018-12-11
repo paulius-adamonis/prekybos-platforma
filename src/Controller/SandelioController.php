@@ -4,7 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Islaidos;
 use App\Entity\IslaidosTipas;
+use App\Entity\Kokybe;
+use App\Entity\ParduotuvesPreke;
 use App\Entity\PrekiuPriklausymas;
+use App\Entity\PrekiuUzsakymas;
 use App\Entity\Sandelis;
 use App\Entity\SandeliuPriklausymas;
 use App\Form\SandelioIslaidaType;
@@ -30,8 +33,8 @@ class SandelioController extends AbstractController
                 array ('sandeliai' => $sandeliai,
                     'title' => 'Sandeliai'));
         }
-        elseif ($auth_checker->isGranted('ROLE_SANDELIO_DARBUOTOJAS') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_VALDYTOJAS'))
+        elseif ($auth_checker->isGranted('ROLE_DARBUOTOJAS') ||
+            $auth_checker->isGranted('ROLE_VALDYTOJAS'))
         {
             $user = $this->getUser();
             $userId = $user->getId();
@@ -54,7 +57,7 @@ class SandelioController extends AbstractController
     {
         $auth_checker = $this->get('security.authorization_checker');
         if($auth_checker->isGranted('ROLE_ADMIN') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_DARBUOTOJAS')) {
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
             $sandelis = $this->getDoctrine()->getRepository(Sandelis::class)->findOneBy(array(
                 'id' => $sandelioId
             ));
@@ -83,7 +86,7 @@ class SandelioController extends AbstractController
     {
         $auth_checker = $this->get('security.authorization_checker');
         if($auth_checker->isGranted('ROLE_ADMIN') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_VALDYTOJAS')) {
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
             $islaida = new Islaidos();
             $tipai = $this->getDoctrine()->getRepository(IslaidosTipas::class)->findAll();
             $form = $this->createForm(SandelioIslaidaType::class, $islaida, array(
@@ -119,7 +122,7 @@ class SandelioController extends AbstractController
     {
         $auth_checker = $this->get('security.authorization_checker');
         if($auth_checker->isGranted('ROLE_ADMIN') ||
-            $auth_checker->isGranted('ROLE_SANDELIO_VALDYTOJAS')) {
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
             $sandelis = $this->getDoctrine()->getRepository(Sandelis::class)->findOneBy(array(
                 'id' => $sandelioId
             ));
@@ -137,6 +140,83 @@ class SandelioController extends AbstractController
         }
     }
 
+    /**
+     * @Route("/sandelis/uzsakymai", name="uzsakmai_sandelio")
+     */
+    public function indexUzsakymai()
+    {
+        $auth_checker = $this->get('security.authorization_checker');
+        if($auth_checker->isGranted('ROLE_ADMIN') ||
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
+            $userId = $this->getUser()->getId();
+            $Uzssakymai = $this->getDoctrine()->getRepository(PrekiuUzsakymas::class)->findBy([
+                'fkVartotojas' => $userId
+            ]);
+            if ($userId) {
+                return $this->render('sandelio/indexUzsakymai.html.twig', array(
+                    'title' => 'Trukstamos prekės',
+                    'uzsakymai' => $Uzssakymai));
+            } else return $this->redirectToRoute('sandelis');
+        }
+        else {
+            return $this->redirectToRoute('app_main');
+        }
+    }
+
+    /**
+     * @Route("/sandelis/uzsakymai/{sandelioId}/{prekesId}/{uzsakymoId}/{kiekis}/{busena}", name="busenos")
+     *
+     */
+    public function Busenos($sandelioId,$prekesId,$kiekis,$busena,$uzsakymoId)
+    {
+        $auth_checker = $this->get('security.authorization_checker');
+        if($auth_checker->isGranted('ROLE_ADMIN') ||
+            $auth_checker->isGranted('ROLE_VALDYTOJAS')) {
+            $sandelis = $this->getDoctrine()->getRepository(Sandelis::class)->findOneBy(['id' => $sandelioId]);
+            $preke = $this->getDoctrine()->getRepository(ParduotuvesPreke::class)->findOneBy(['id' => $prekesId]);
+            $Uzssakymas = $this->getDoctrine()->getRepository(PrekiuUzsakymas::class)->find($uzsakymoId);
+            $prekiuPriklausymai = $this->getDoctrine()->getRepository(PrekiuPriklausymas::class)->findOneBy([
+                'fkSandelis' => $sandelis,
+                'fkParduotuvesPreke' => $preke
+            ]);
+            $entityManager = $this->getDoctrine()->getManager();
+            if ($busena == 'uzsakyti') {
+                $Uzssakymas->setArUzsakyta(true);
+                $entityManager->persist($Uzssakymas);
+                $entityManager->flush();
+                return $this->redirect('/sandelis/uzsakymai');
+            } elseif ($busena == 'pristatyta'){
+                $Uzssakymas->setArPristatyta(true);
+                $entityManager->persist($Uzssakymas);
+                $entityManager->flush();
+                if(!$prekiuPriklausymai) {
+                    $kokybe = $this->getDoctrine()->getRepository(Kokybe::class)->findOneBy(['id' => 1]);
+                    $prekesPriklausymas = new PrekiuPriklausymas();
+                    $prekesPriklausymas->setKiekis($kiekis)
+                        ->setFkKokybe($kokybe)
+                        ->setFkSandelis($sandelis)
+                        ->setFkParduotuvesPreke($preke);
+                    $entityManager->persist($prekesPriklausymas);
+                    $entityManager->flush();
+                }else{
+                    $prekiuPriklausymai = $this->getDoctrine()->getRepository(PrekiuPriklausymas::class)->findOneBy([
+                        'fkSandelis' => $sandelis,
+                        'fkParduotuvesPreke' => $preke
+                    ]);
+                    $prekiuPriklausymai->addKiekis($kiekis);
+                    $entityManager->merge($prekiuPriklausymai);
+                    $entityManager->flush();
+                }
+                return $this->redirect('/sandelis/uzsakymai');
+            }
+            else
+                return $this->redirect('/sandelis/' . $sandelioId);
+
+        }
+        else {
+            return $this->redirectToRoute('app_main');
+        }
+    }
 
 
 }
