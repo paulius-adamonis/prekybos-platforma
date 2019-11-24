@@ -14,7 +14,6 @@ use App\Form\PrekiuUzsakymasType;
 use App\Service\FileUploader;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -126,7 +125,7 @@ class EparduotuvesAdministravimoValdiklis extends AbstractController
         $form->handleRequest($request);
         if($request->files->get('parduotuves_preke')['nuotrauka'])
 
-        $form->getErrors();
+            $form->getErrors();
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
 

@@ -12,9 +12,11 @@
         Nusiskundimai yra skirti tam, jog su jūsų pagalba galėtume sumažinti apgavysčių,
         siukčiavimo atvėjų. Jeigu norite peržiūrėti savo parašytus skundus spauskite “Žiūrėti sąrašą”,
         jeigu norite parašyti naują skundą spauskite “Rašyti naują skundą”.
+        {% if is_granted("ROLE_USER") %}
         <ul style="padding-left: 0px; margin-top: 100px; display: flex;">
             <li style="display: unset;"><a href="{{ path('skundai_sarasas') }}">Žiūrėti mano skundų sąrašą</a></li>
             <li style="display: unset; right: 0; position: absolute;"><a href="{{ path('skundai_naujas') }}">Rašyti naują skundą</a></li>
         </ul>
+        {% endif %}
     </div>
 {% endblock %}

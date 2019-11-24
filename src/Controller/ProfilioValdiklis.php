@@ -6,13 +6,14 @@ use App\Entity\Vartotojas;
 use App\Entity\VartotojoAtsiliepimas;
 use App\Form\VartotojoAtsiliepimasType;
 use Knp\Component\Pager\PaginatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ProfilioController extends AbstractController
+class ProfilioValdiklis extends AbstractController
 {
 
     /**
@@ -122,6 +123,7 @@ class ProfilioController extends AbstractController
 
     /**
      * @Route("/vartotojas/zinutes", name="zinutes")
+     * @IsGranted("ROLE_USER")
      */
     public function showAllConversations()
     {
