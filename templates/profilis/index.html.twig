@@ -15,11 +15,13 @@
                         <h6>ID: {{ user.id }}</h6>
                         {{ averageRating|round|rating(5, "fa-norm") }}
                         <h6>Reitingas: {{ averageRating|round(2,'ceil') }}</h6>
+                        {% if is_granted("ROLE_USER") %}
                         {% if user.id != app.user.id %}
                         <li style="display: unset;">
                             <a id="btn-getInTouch" href="#">Parašyti vartotojui</a>
                         </li>
                         <a id="btn-getInTouch2" href="#" class="__talkjs_launcher closed"></a>
+                        {% endif %}
                         {% endif %}
 
                     </div>
@@ -42,7 +44,7 @@
                                 {{ knp_pagination_render(allRatings) }}
                             </div>
                         </div>
-                        {% if tikrinam %}
+                        {% if tikrinam and is_granted("ROLE_USER") %}
                         <div class="ratingsFormTab" style="display: none;">
                             {{ form_start(form) }}
                             {{ form_errors(form) }}
@@ -86,6 +88,7 @@
 
 
     <!-- TalkJS initialization code, which we'll customize in the next steps -->
+    {% if is_granted("ROLE_USER") %}
     {% if user.id != app.user.id %}
     <script>
         Talk.ready.then(function() {
@@ -125,5 +128,6 @@
             });
         });
     </script>
+    {% endif %}
     {% endif %}
 {% endblock %}

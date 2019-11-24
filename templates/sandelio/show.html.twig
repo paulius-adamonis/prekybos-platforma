@@ -1,18 +1,27 @@
 {% extends 'baseSandelis.html.twig' %}
                 {% block sidenav %}
+                    {% if not is_granted("ROLE_DARBININKAS") %}
                     <a class="list-group-item" href="{{ path('sandeliuprekes') }}">Parduotuvės prėkės</a>
+                    {% endif %}
                     {% if not is_granted("ROLE_ADMIN") %}
                         <a class="list-group-item" href="{{ path('sandelis') }}">Sandelis</a>
                     {% endif %}
                     {% if is_granted("ROLE_ADMIN") %}
                         <a class="list-group-item" href="{{ path('sandelis') }}">Sandeliai</a>
                     {% endif %}
+                    {% if not is_granted("ROLE_DARBININKAS") %}
                     <a class="list-group-item" href="{{ path('sandelis') }}/{{ sandelioId }}/islaida">
                         Sandėlio išlaidos
                     </a>
                     <a class="list-group-item" href="{{ path('sandelis') }}/{{ sandelioId }}/trukstama">
                         Trukstamos sandėlio prekės
                     </a>
+                    {% endif %}
+                    {% if is_granted("ROLE_VALDYTOJAS") %}
+                    <a class="list-group-item" href="{{ path('sandelis') }}/uzsakymai">
+                        Uzsakymai
+                    </a>
+                    {% endif %}
                 {% endblock %}
 {% block body %}
     <h1>{{ sandelis.adresas }}</h1>
@@ -24,6 +33,7 @@
             <th>Pavadinimas</th>
             <th>Ikėlimo data</th>
             <th>Kiekis</th>
+            <th>Kokybė</th>
             <th>Veiksmai</th>
         </tr>
         </thead>
@@ -34,12 +44,13 @@
                 <td>{{ preke.fkParduotuvesPreke.pavadinimas }}</td>
                 <td>{{ preke.fkParduotuvesPreke.ikelimoData|date("Y-m-d") }}</td>
                 <td>{{ preke.kiekis }}</td>
+                <td>{{ preke.fkKokybe.pavadinimas }}</td>
                 <td><a class="btn btn-primary btn-outline-primary" href="{{ sandelioId }}/plusminus/{{ preke.id }}/1">+1</a>
                     <a class="btn btn-primary btn-outline-primary" href="{{ sandelioId }}/plusminus/{{ preke.id }}/-1">-1</a>
                     <a class="btn btn-primary btn-outline-primary" href="{{ sandelioId }}/plusminus/{{ preke.id }}/5">+5</a>
                     <a class="btn btn-primary btn-outline-primary" href="{{ sandelioId }}/plusminus/{{ preke.id }}/-5">-5</a>
                     <a class="btn btn-primary btn-outline-primary" href="{{ sandelioId }}/{{ preke.id }}">Parodyti</a>
-                    {% if is_granted("ROLE_ADMIN") %}
+                    {% if is_granted("ROLE_ADMIN") or is_granted("ROLE_VALDYTOJAS") %}
                     <a class="btn btn-primary btn-outline-primary" href="{{ path('sandelis') }}/{{ sandelioId }}/preke/edit/{{ preke.id }}">Tvarkyti</a>
                     <a class="btn btn-primary btn-outline-primary" style="color: red" href="{{ path('sandelis') }}/{{ sandelioId }}/preke/remove/{{ preke.id }}">Naikinti</a>
                     {% endif %}

@@ -21,11 +21,12 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 
 class TurgausController extends AbstractController
 {
     /**
-     * @Route("/turgus/{type}"), methods={"GET"})
+     * @Route("/turgus/{type}"), methods={"GET", "POST"})
      */
     public function landing($type = 'Įprastas')
     {
@@ -34,6 +35,33 @@ class TurgausController extends AbstractController
                 'pavadinimas' => $type
             )
         );
+
+        if ($categoryArr == null) {
+            $entityManager = $this->getDoctrine()->getManager();
+
+            $type1 = new PardavimoTipas();
+            // $type1->setId(1);
+            $type1->setPavadinimas('Įprastas');
+            $entityManager->persist($type1);
+
+            $type2 = new PardavimoTipas();
+            // $type2->setId(2);
+            $type2->setPavadinimas('Aukcionas');
+            $entityManager->persist($type2);
+
+            $type3 = new PardavimoTipas();
+            // $type3->setId(3);
+            $type3->setPavadinimas('Mainai');
+            $entityManager->persist($type3);
+            
+            $entityManager->flush();
+
+            $categoryArr = $this->getDoctrine()->getRepository(PardavimoTipas::class)->findBY(
+                array(
+                    'pavadinimas' => $type
+                )
+            );
+        }
 
         $categoryArr = array_values($categoryArr);
 
@@ -302,6 +330,15 @@ class TurgausController extends AbstractController
         foreach ($sellArr as $sell) {
             if ($sell->getFkPardavejas() == $sell->getFkPirkejas() && $sell->getFkPardavejas() == $this->getUser() && $sell->getFkTurgausPreke()->isArPasalinta() == 0 && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija()->isArPasalinta() == 0){
                 array_push($productArr, $sell->getFkTurgausPreke());
+            } else {
+                $category = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(
+                    array(
+                        'id' => $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija()->getId()
+                    )
+                );
+                if (strtoupper($category[0]->getFkPardavimoTipas()->getPavadinimas()) == strtoupper('Aukcionas') && $sell->getFkPardavejas() == $this->getUser() && $sell->getFkTurgausPreke()->isArPasalinta() == 0 && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija()->isArPasalinta() == 0){
+                    array_push($productArr, $sell->getFkTurgausPreke());
+                }
             }
         }
 
@@ -368,7 +405,9 @@ class TurgausController extends AbstractController
             }
         }
 
-        $categories = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(array('arPasalinta' => 0, 'fkPardavimoTipas' => 1));
+        $sellTypes = $this->getDoctrine()->getRepository(PardavimoTipas::class)->findBy(array());
+
+        $categories = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(array('arPasalinta' => 0, 'fkPardavimoTipas' => $sellTypes[0]->getId()));
         $simpleCategoryChoice = array();
         foreach ($categories as $category) {
             $name = $category->getPavadinimas();
@@ -376,7 +415,7 @@ class TurgausController extends AbstractController
             $simpleCategoryChoice[$name] = $id;
         }
 
-        $categories = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(array('arPasalinta' => 0, 'fkPardavimoTipas' => 2));
+        $categories = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(array('arPasalinta' => 0, 'fkPardavimoTipas' => $sellTypes[1]->getId()));
         $auctionCategoryChoice = array();
         foreach ($categories as $category) {
             $name = $category->getPavadinimas();
@@ -384,7 +423,7 @@ class TurgausController extends AbstractController
             $auctionCategoryChoice[$name] = $id;
         }
 
-        $categories = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(array('arPasalinta' => 0, 'fkPardavimoTipas' => 3));
+        $categories = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(array('arPasalinta' => 0, 'fkPardavimoTipas' => $sellTypes[2]->getId()));
         $tradeCategoryChoice = array();
         foreach ($categories as $category) {
             $name = $category->getPavadinimas();
@@ -423,21 +462,26 @@ class TurgausController extends AbstractController
         }
 
         else if(strtoupper($type) == strtoupper('Aukcionas')) {
+            $addCategory = array();
             $form = $this->createFormBuilder(array($newProduct, $newSell))
             ->add('prekes_pavadinimas', TextType::class, array('label' => 'Prekės pavadinimas'))
             ->add('kiekis', IntegerType::class)
             ->add('aprasymas', TextType::class, array('label' => 'Aprašymas'))
             ->add('kategorija', ChoiceType::class, array(
                 'choices' => array(
-                    'Įprasti pardavimai' => $simpleCategoryChoice,
-                    'Aukcionas' => $auctionCategoryChoice,
-                    'Mainai' => $tradeCategoryChoice
+                    'Aukcionas' => $auctionCategoryChoice
                 )
+            ))
+            ->add('nauja_kategorija', ButtonType::class, array (
+                'attr' => array(
+                    'class' => 'new-category-btn',
+                    'onclick' => 'location="/turgus-nauja-kategorija"'
+                ),
+                'label' => '+'
             ))
             ->add('nuotrauka', FileType::class)
             ->add('pradine_kaina', IntegerType::class, array('label' => 'Pradinė kaina'))
             ->add('maziausias_statymas', IntegerType::class, array('label' => 'Mažiausias statymas'))
-            ->add('aukciono_trukme', IntegerType::class, array('label' => 'Aukciono trukmė valandomis'))
             ->add('save', SubmitType::class, array('label' => 'Pridėti prekę'))
             ->getForm();
 
@@ -452,7 +496,6 @@ class TurgausController extends AbstractController
                     $category = $form['kategorija']->getData();
                     $startingPrice = $form['pradine_kaina']->getData();
                     $minBet = $form['maziausias_statymas']->getData();
-                    $auctionLength = $form['aukciono_trukme']->getData();
                     $fileIndex = 0;
                     $fileName = $fileIndex.".png";
                     while (file_exists('images/'.$fileName)) {
@@ -475,7 +518,6 @@ class TurgausController extends AbstractController
                     $newProduct->setAprasymas($about);
                     $newProduct->setNuotrauka($fileName);
                     $newProduct->setPradineKaina($startingPrice);
-                    $newProduct->setPabaigosData(new \DateTime());
                     $newProduct->setData(new \DateTime());
                     $newProduct->setMinimalusStatymas($minBet);
                     $newProduct->setFkTurgPrekesKategorija($category[0]);
@@ -520,13 +562,18 @@ class TurgausController extends AbstractController
             ->add('aprasymas', TextType::class, array('label' => 'Aprašymas'))
             ->add('kategorija', ChoiceType::class, array(
                 'choices' => array(
-                    'Įprasti pardavimai' => $simpleCategoryChoice,
-                    'Aukcionas' => $auctionCategoryChoice,
                     'Mainai' => $tradeCategoryChoice
                 )
             ))
+            ->add('nauja_kategorija', ButtonType::class, array (
+                'attr' => array(
+                    'class' => 'new-category-btn',
+                    'onclick' => 'location="/turgus-nauja-kategorija"'
+                ),
+                'label' => '+'
+            ))
             ->add('nuotrauka', FileType::class)
-            ->add('ieskomos_prekes_aprasymas', TextType::class, array('label' => 'Ieškomos prekės aprašymas', 'required' => false))
+            ->add('ieskomos_prekes_aprasymas', TextType::class, array('label' => 'Ieškomos prekės aprašymas'))
             ->add('save', SubmitType::class, array('label' => 'Pridėti prekę'))
             ->getForm();
 
@@ -606,10 +653,15 @@ class TurgausController extends AbstractController
             ->add('aprasymas', TextType::class, array('label' => 'Aprašymas'))
             ->add('kategorija', ChoiceType::class, array(
                 'choices' => array(
-                    'Įprasti pardavimai' => $simpleCategoryChoice,
-                    'Aukcionas' => $auctionCategoryChoice,
-                    'Mainai' => $tradeCategoryChoice
+                    'Įprasti pardavimai' => $simpleCategoryChoice
                 )
+            ))
+            ->add('nauja_kategorija', ButtonType::class, array (
+                'attr' => array(
+                    'class' => 'new-category-btn',
+                    'onclick' => 'location="/turgus-nauja-kategorija"'
+                ),
+                'label' => '+'
             ))
             ->add('nuotrauka', FileType::class)
             ->add('save', SubmitType::class, array('label' => 'Pridėti prekę'))
@@ -727,6 +779,15 @@ class TurgausController extends AbstractController
         foreach ($sellArr as $sell) {
             if ($sell->getFkPardavejas() == $sell->getFkPirkejas() && $sell->getFkPardavejas() == $this->getUser() && $sell->getFkTurgausPreke()->isArPasalinta() == 0 && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija()->isArPasalinta() == 0){
                 array_push($productArr, $sell->getFkTurgausPreke());
+            } else {
+                $category = $this->getDoctrine()->getRepository(TurgPrekesKategorija::class)->findBy(
+                    array(
+                        'id' => $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija()->getId()
+                    )
+                );
+                if (strtoupper($category[0]->getFkPardavimoTipas()->getPavadinimas()) == strtoupper('Aukcionas') && $sell->getFkPardavejas() == $this->getUser() && $sell->getFkTurgausPreke()->isArPasalinta() == 0 && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija()->isArPasalinta() == 0){
+                    array_push($productArr, $sell->getFkTurgausPreke());
+                }
             }
         }
 
@@ -766,7 +827,7 @@ class TurgausController extends AbstractController
                 'label' => 'Prekė',
                 'choices' => $productsChoice
             ))
-            ->add('save', SubmitType::class, array('label' => 'Pridėti prekę'))
+            ->add('save', SubmitType::class, array('label' => 'Parduoti'))
             ->getForm();
 
         $form->handleRequest($request);
@@ -811,7 +872,9 @@ class TurgausController extends AbstractController
                 $regSell->setFkPirkejas($buyer[0]);
                 $regSell->setFkTurgausPreke($product[0]);
 
-                $entityManager->persist($regSell);
+                if (strtoupper($regSell->getFkTurgausPreke()->getFkTurgPrekesKategorija()->getFkPardavimoTipas()->getPavadinimas()) != strtoupper('Aukcionas')) {
+                    $entityManager->persist($regSell);
+                }
                 $entityManager->flush();
 
 
@@ -957,6 +1020,8 @@ class TurgausController extends AbstractController
         {
             foreach($sells as $sell) {
                 if ($sell->getFkPardavejas() == $sell->getFkPirkejas() && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija() == $categoryArr[0] && $sell->getFkTurgausPreke()->isArPasalinta() == 0) {
+                    array_push($products, $sell->getFkTurgausPreke());
+                } else if (strtoupper($type) == strtoupper('Aukcionas')  && $sell->getFkTurgausPreke()->getFkTurgPrekesKategorija() == $categoryArr[0] && $sell->getFkTurgausPreke()->isArPasalinta() == 0) {
                     array_push($products, $sell->getFkTurgausPreke());
                 }
             }
@@ -1146,6 +1211,61 @@ class TurgausController extends AbstractController
             ]);
         }
         
+        return $this->render('turgus/formCard.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+     /**
+     * @Route("/turgus-nauja-kategorija"), methods={"GET", "POST"})
+     */
+    public function newCategory(Request $request)
+    {
+        if ($this->getUser() == null) {
+            return $this->render('turgus/requestSuccess.twig', [
+                'msg' => 'Prašome prisijungti.',
+                'link' => '/login'
+            ]);
+        }
+
+        $types = $this->getDoctrine()->getRepository(PardavimoTipas::class)->findBy(array());
+        $choices = array();
+        foreach ($types as $t) {
+            $choices[$t->getPavadinimas()] = $t->getId();
+        }
+
+        $form = $this->createFormBuilder(array())
+        ->add('pardavimo_tipas', ChoiceType::class, array(
+            'choices' => $choices
+        ))
+        ->add('kategorijos_pavadinimas', TextType::class)
+        ->add('save', SubmitType::class, array('label' => 'Pasirinkti'))
+        ->getForm();
+
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            $t = $form['pardavimo_tipas']->getData();
+            $name = $form['kategorijos_pavadinimas']->getData();
+            $t = $this->getDoctrine()->getRepository(PardavimoTipas::class)->findBy(array('id' => $t));
+            $t = $t[0];
+
+            $newCategory = new TurgPrekesKategorija();
+            $newCategory->setPavadinimas($name);
+            $newCategory->setFkVartotojas($this->getUser());
+            $newCategory->setFKPardavimoTipas($t);
+            $newCategory->setArPasalinta(0);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($newCategory);
+            $entityManager->flush();
+
+            return $this->render('turgus/requestSuccess.twig', [
+                'msg' => 'Kategorija pridėta sėkmingai.',
+                'link' => '/turgus-mano-prekes'
+            ]);
+        }
+
         return $this->render('turgus/formCard.twig', [
             'form' => $form->createView()
         ]);
