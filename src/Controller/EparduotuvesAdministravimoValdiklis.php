@@ -47,7 +47,12 @@ class EparduotuvesAdministravimoValdiklis extends AbstractController
         $form->getErrors();
         if ($form->isSubmitted() && $form->isValid()) {
             $preke->setIkelimoData(new \DateTime());
-            $nuotrauka = $request->files->get('parduotuves_preke')['nuotrauka'];
+
+            if(isset($request->files->get('parduotuves_preke')['nuotrauka']))
+                $nuotrauka = $request->files->get('parduotuves_preke')['nuotrauka'];
+            else
+                $nuotrauka = null;
+
             if($nuotrauka){
                 $nuotraukosFailas = $fileUploader->upload($nuotrauka);
                 $preke->setNuotrauka($nuotraukosFailas);
