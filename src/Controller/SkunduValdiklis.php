@@ -2,16 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Busena;
 use App\Entity\Skundas;
-use App\Entity\SkundoTipas;
-use App\Entity\Vartotojas;
 use App\Form\SkundasType;
+use App\Service\SkundoServisas;
+use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SkunduValdiklis extends AbstractController
@@ -30,27 +30,24 @@ class SkunduValdiklis extends AbstractController
      * @Route("/skundai/naujas", name="skundai_naujas")
      * @Method({"GET", "POST"})
      * @IsGranted("ROLE_USER")
+     * @param Request $request
+     * @param SkundoServisas $skundoServisas
+     * @return Response
+     * @throws Exception
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request, SkundoServisas $skundoServisas)
     {
+        //TODO:: Visas kodas nuo pradžios iki response atidavimo turi būti apsuptas TRY-CATCH bloku
         $user = $this->getUser();
         $newComplaint = new Skundas();
-        $complaints = $this->getDoctrine()->getRepository(SkundoTipas::class)->findAll();
-        $status = $this->getDoctrine()->getRepository(Busena::class)->find(1);
+        $complaints = $skundoServisas->getAllComplaintsTypes();
         $form = $this->createForm(SkundasType::class, $newComplaint, array(
             'complaints' => $complaints
         ));
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
-            $newComplaint = $form->getData();
-
-            $newComplaint->setData(new \DateTime());
-            $newComplaint->setFkPareiskejas($user);
-            $newComplaint->setFkBusena($status);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($newComplaint);
-            $entityManager->flush();
+            $skundoServisas->storeComplaint($newComplaint, $user);
 
             return $this->render('skundu/index.html.twig', [
                 'title' => 'Nusiskundimai',
@@ -69,7 +66,7 @@ class SkunduValdiklis extends AbstractController
      * @Method({"GET", "POST"})
      * @IsGranted("ROLE_USER")
      */
-    public function showAction(Request $request)
+    public function showAction()
     {
         $user = $this->getUser();
         $complaints = $user->getParasytusSkundus();

@@ -2,12 +2,9 @@
 
 namespace App\Tests\Controller;
 
-
 use App\Entity\ParduotuvesPreke;
-use App\Form\PrekiuUzsakymasType;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\DomCrawler\Crawler;
 
 class EparduotuvesAdministravimoValdiklioTest extends WebTestCase
 {
@@ -61,17 +58,5 @@ class EparduotuvesAdministravimoValdiklioTest extends WebTestCase
             'pavadinimas' => $pavadinimas,
             'aprasymas' => $aprasymas]);
         $this->assertCount(1, $preke);
-    }
-
-    public function testUzsakytiPreke(){
-        $id = 1;
-        $crawler = $this->client->request('GET', '/admin/parduotuve/uzsakytiPreke/'.$id);
-
-        $this->client->request('POST', '/admin/parduotuve/uzsakytiPreke/'.$id, [
-            'prekiu_uzsakymas[kiekis]' => 99
-        ]);
-        /**
-         * To be continued...
-         */
     }
 }

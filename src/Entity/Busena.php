@@ -29,17 +29,38 @@ class Busena
      */
     private $pavadinimas;
 
-    public function getId(): ?int
+    /**
+     * @return int
+     */
+    public function getId(): int
     {
         return $this->id;
     }
 
+    /**
+     * @param int $id
+     * @return $this
+     */
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
     public function getPavadinimas(): ?string
     {
         return $this->pavadinimas;
     }
 
-    public function setPavadinimas(string $pavadinimas): self
+    /**
+     * @param string|null $pavadinimas
+     * @return $this
+     */
+    public function setPavadinimas(?string $pavadinimas): self
     {
         $this->pavadinimas = $pavadinimas;
 
