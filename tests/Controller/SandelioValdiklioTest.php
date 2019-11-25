@@ -201,4 +201,59 @@ class SandelioValdiklioTest extends WebTestCase
             'arUzsakyta' => true]);
         $this->assertCount(1, $prekesPeiklausymas);
     }
+
+    public function testUzsakytiPrekeKaiPrekeYraSandelyje(){
+
+        $kiekis = 55;
+        $preke = 15;
+        $sandelis = 3;
+        $uzsakymoId = 8;
+        $busena = 'uzsakyti';
+
+        $this->pridetiNaujaPrekeISandeli(1, 6, 0, $sandelis);
+
+        /** @var PrekiuPriklausymas $prekesPeiklausymas */
+        $prekesPeiklausymas = $this->em->getRepository(PrekiuPriklausymas::class)->findBy([
+            'fkSandelis' => $sandelis,
+            'fkKokybe' => 1,
+            'fkParduotuvesPreke' => 15]);
+        $this->assertCount(1, $prekesPeiklausymas);
+
+        ///** @var PrekiuPriklausymas $prekesPeiklausymas */
+        $prekesPeiklausymas = $this->em->getRepository(PrekiuUzsakymas::class)->findBy([
+            'fkSandelis' => $sandelis,
+            'fkParduotuvesPreke' => $preke,
+            'kiekis' => $kiekis,
+            'arPristatyta' => false,
+            'arUzsakyta' => false]);
+        $this->assertCount(1, $prekesPeiklausymas);
+
+        $this->KeistiUzsakymoBusena($sandelis, $preke, $kiekis, $uzsakymoId, $busena);
+
+        $prekesPeiklausymas = $this->em->getRepository(PrekiuUzsakymas::class)->findBy([
+            'fkSandelis' => $sandelis,
+            'fkParduotuvesPreke' => $preke,
+            'kiekis' => $kiekis,
+            'arPristatyta' => false,
+            'arUzsakyta' => true]);
+        $this->assertCount(1, $prekesPeiklausymas);
+
+        $busena = 'pristatyta';
+        $this->KeistiUzsakymoBusena($sandelis, $preke, $kiekis, $uzsakymoId, $busena);
+
+        $prekesPeiklausymas = $this->em->getRepository(PrekiuUzsakymas::class)->findBy([
+            'fkSandelis' => $sandelis,
+            'fkParduotuvesPreke' => $preke,
+            'kiekis' => $kiekis,
+            'arPristatyta' => true,
+            'arUzsakyta' => true]);
+        $this->assertCount(1, $prekesPeiklausymas);
+
+        $prekesPeiklausymas = $this->em->getRepository(PrekiuPriklausymas::class)->findBy([
+            'fkSandelis' => $sandelis,
+            'fkKokybe' => 1,
+            'kiekis' => 1+$kiekis,
+            'fkParduotuvesPreke' => 15]);
+        $this->assertCount(1, $prekesPeiklausymas);
+    }
 }
